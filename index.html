@@ -1,0 +1,3370 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EEF3F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0A1322" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="日課">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23FF7A1A' d='M12.4 1.6c.5 3 2.3 4.7 4 6.5 1.6 1.8 3.1 3.7 3.1 6.7a7.5 7.5 0 0 1-15 0c0-2.6 1.2-4.6 2.8-6.1.2 1.6 1 2.8 2.3 3.4-.6-4 .6-7.6 2.8-10.5z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600&display=swap">
+<title>日課と目標</title>
+<style>
+/* ============================================================
+   デザイン:牛深の夜の海と漁火(いさりび)
+   夜の海 #10233F/漁火 #FF9F1C/潮(背景)#EEF3F7/墨 #18212F/若竹 #22B573/氷 #2F9BE0
+   ============================================================ */
+:root {
+  --bg: #EEF3F7;
+  --card: #FFFFFF;
+  --text: #18212F;
+  --muted: #66758A;
+  --line: #DCE4ED;
+  --line-deep: #C7D2DF;
+  --soft: #F3F7FA;
+  --sea: #10233F;
+  --sea-2: #1C3E68;
+  --sea-ink: #F3F7FC;
+  --flame: #FF9F1C;
+  --flame-in: #FFD166;
+  --flame-off: #A9B6C6;
+  --danger: #E5484D;
+  --danger-soft: #FFECEC;
+  --coral: #FF6B6E;
+  --done: #22B573;
+  --done-deep: #178A56;
+  --done-soft: #E2F6EC;
+  --done-ink: #FFFFFF;
+  --ice: #2F9BE0;
+  --ice-light: #7FD3FF;
+  --ice-soft: #E3F3FC;
+  --accent: #10233F;
+  --blue: #3D45F5;
+  --seg-track: rgba(16, 35, 63, .07);
+  --seg-on: #18212F;
+  --seg-on-ink: #FFFFFF;
+  --tag: rgba(16, 24, 40, .06);
+  --accent-deep: #050F1F;
+  --on-accent: #FFFFFF;
+  --demo: #FFF1C2;
+  --demo-text: #5C4500;
+  --toast: #10233F;
+  --toast-ink: #F3F7FC;
+  --toast-link: #FFD166;
+  --f-ui: "Inter", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
+  --f-num: "Inter", "Noto Sans JP", system-ui, sans-serif;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0A1322;
+    --card: #121E33;
+    --text: #E8EEF6;
+    --muted: #93A3B8;
+    --line: #22324B;
+    --line-deep: #172438;
+    --soft: #16243B;
+    --sea: #060E1C;
+    --sea-2: #11294A;
+    --flame-off: #6B7A90;
+    --danger: #FF6B6E;
+    --danger-soft: #3A1E26;
+    --done: #2FCB85;
+    --done-deep: #1E9A63;
+    --done-soft: #12301F;
+    --done-ink: #06210F;
+    --ice: #6CC4F5;
+    --ice-soft: #13304A;
+    --accent: #3A6EA8;
+    --blue: #5B63FF;
+    --seg-track: rgba(255, 255, 255, .07);
+    --seg-on: #E8EEF6;
+    --seg-on-ink: #0A1322;
+    --tag: rgba(255, 255, 255, .08);
+    --accent-deep: #22466F;
+    --demo: #3D3414;
+    --demo-text: #FFE69A;
+    --toast: #E8EEF6;
+    --toast-ink: #0A1322;
+    --toast-link: #B85E00;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--f-ui);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: -.005em;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid color-mix(in srgb, var(--flame) 75%, transparent); outline-offset: 2px; }
+main {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 6px 16px calc(110px + env(safe-area-inset-bottom));
+}
+h2 {
+  margin: 26px 4px 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: .02em;
+}
+h2 .count, .count {
+  margin-left: 8px;
+  font-family: var(--f-num);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, .05);
+  padding: 16px;
+  margin-bottom: 14px;
+}
+.card.list { padding: 2px 0; overflow: hidden; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.block { display: block; }
+.empty { padding: 14px 16px; color: var(--muted); font-size: 14px; }
+
+/* ボタン:押したくなる、少し立体的な形(高さ44px以上) */
+.btn {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  box-shadow: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .06s, box-shadow .06s;
+}
+.btn:active:not(:disabled) { transform: scale(.97); }
+.btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn.link {
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--muted);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.btn.danger { color: var(--danger); }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+input[type=date], input[type=time], input[type=text], input[type=url], input[type=password], select {
+  min-height: 46px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+}
+input[type=text], input[type=url], input[type=password], select { width: 100%; }
+input:focus, select:focus { border-color: var(--blue); outline: none; }
+::placeholder { color: var(--muted); opacity: .6; }
+
+/* ---------- 今日:日付 ---------- */
+.today-date { margin: 2px 4px 12px; font-size: 15px; font-weight: 600; }
+.sync-note { display: block; font-size: 12px; font-weight: 500; color: var(--muted); }
+.sync-note:empty { display: none; }
+
+/* ---------- 今日:夜の海(ストリーク) ---------- */
+.hero {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 8px;
+  padding: 16px 18px 16px;
+  border-radius: 28px;
+  color: var(--sea-ink);
+  background: linear-gradient(180deg, #0A1830 0%, var(--sea) 52%, var(--sea-2) 100%);
+  box-shadow: 0 14px 30px -14px rgba(5, 15, 31, .55);
+}
+.hero.s-urgent { box-shadow: 0 0 0 2px var(--coral), 0 14px 30px -14px rgba(5, 15, 31, .55); }
+.hero-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.hero-best { font-size: 13px; color: rgba(243, 247, 252, .7); }
+.hero-best b { font-family: var(--f-num); font-size: 18px; color: var(--sea-ink); margin: 0 1px; }
+.pill {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .13);
+  color: var(--sea-ink);
+  white-space: nowrap;
+}
+.pill.ok { background: var(--done); color: #fff; }
+.pill.rest { background: rgba(127, 211, 255, .24); color: #DFF5FF; }
+.s-urgent .pill { background: var(--coral); color: #fff; }
+.hero-main { position: relative; z-index: 1; display: flex; align-items: center; gap: 4px; margin-top: 4px; }
+.flame { position: relative; flex: none; width: 86px; height: 86px; margin-left: -8px; color: #7F8FA6; }
+.flame::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 159, 28, .6), rgba(255, 159, 28, 0));
+  opacity: 0;
+  transition: opacity .4s;
+}
+.flame svg { position: relative; display: block; width: 100%; height: 100%; }
+.flame .outer { fill: currentColor; }
+.flame .inner { fill: var(--sea); opacity: .55; }
+.s-lit .flame { color: var(--flame); }
+.s-lit .flame::before { opacity: 1; }
+.s-lit .flame .inner { fill: var(--flame-in); opacity: 1; }
+.s-urgent .flame { color: var(--coral); }
+.s-rest .flame { color: var(--ice-light); }
+.hero-count { display: flex; flex-direction: column; }
+.num {
+  font-family: var(--f-num);
+  font-size: 92px;
+  font-weight: 600;
+  line-height: .86;
+  letter-spacing: -.02em;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.unit { font-size: 15px; font-weight: 600; color: rgba(243, 247, 252, .75); }
+.s-urgent .num { color: #FFC2C3; }
+.cheer {
+  position: absolute;
+  right: 20px;
+  top: 58px;
+  z-index: 2;
+  font-family: var(--f-num);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--flame-in);
+  animation: cheer 2.6s ease forwards;
+}
+.celebrate .flame { animation: flare .8s ease-out; }
+.celebrate .num { animation: pop .6s ease-out; }
+@keyframes pop { 0% { transform: scale(.9); } 45% { transform: scale(1.12); } 100% { transform: scale(1); } }
+@keyframes flare { 0% { transform: scale(.85); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+@keyframes cheer { 0% { opacity: 0; transform: translateY(10px); } 15%, 75% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-14px); } }
+
+/* 水平線と、この7日間の灯り */
+.sea {
+  position: relative;
+  margin: 16px -18px 0;
+  padding: 14px 14px 4px;
+  border-top: 1px solid rgba(255, 255, 255, .16);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='24'%3E%3Cpath d='M0 12 Q15 6 30 12 T60 12 T90 12 T120 12' fill='none' stroke='white' stroke-opacity='.07' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-size: 120px 24px;
+}
+.sea::before {
+  /* 漁火が海に映る */
+  content: '';
+  position: absolute;
+  left: 34px;
+  top: 0;
+  width: 36px;
+  height: 100%;
+  background: repeating-linear-gradient(180deg, rgba(255, 168, 46, .85) 0 3px, transparent 3px 8px);
+  -webkit-mask-image: linear-gradient(180deg, #000 10%, transparent);
+  mask-image: linear-gradient(180deg, #000 10%, transparent);
+  filter: blur(.8px);
+  opacity: 0;
+  transition: opacity .4s;
+}
+.s-lit .sea::before { opacity: 1; }
+.week { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(7, 1fr); margin: 0; padding: 0; list-style: none; }
+.wl { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.wl-dot {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, .2);
+  background: rgba(255, 255, 255, .06);
+  color: #9FE0FF;
+}
+.wl-dot svg { width: 14px; height: 14px; }
+.wl-day { font-size: 11px; font-weight: 500; color: rgba(243, 247, 252, .6); }
+.w-done .wl-dot, .w-today-done .wl-dot {
+  border-color: transparent;
+  background: radial-gradient(circle at 50% 38%, #FFF1C9, var(--flame) 72%);
+  box-shadow: 0 0 14px rgba(255, 159, 28, .8);
+}
+.w-freeze .wl-dot, .w-rest .wl-dot { border-color: rgba(127, 211, 255, .65); background: rgba(127, 211, 255, .18); }
+.w-broken .wl-dot { border-style: dashed; border-color: rgba(255, 255, 255, .3); background: none; }
+.w-off .wl-dot { border-color: rgba(255, 255, 255, .12); background: none; }
+.w-none .wl-dot { opacity: .35; }
+.w-today .wl-dot { border-color: var(--flame); background: none; }
+.w-today .wl-day, .w-today-done .wl-day, .w-rest .wl-day { color: #fff; }
+
+.hero-foot { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-top: 14px; }
+.freeze { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: rgba(243, 247, 252, .75); }
+.freeze b { font-family: var(--f-num); font-size: 17px; color: #fff; margin: 0 1px; }
+.ice { display: inline-flex; width: 18px; height: 18px; color: rgba(255, 255, 255, .22); }
+.ice.on { color: var(--ice-light); }
+.ice svg { width: 100%; height: 100%; }
+.hero .btn { border-color: rgba(255, 255, 255, .22); background: rgba(255, 255, 255, .08); color: var(--sea-ink); }
+.hero .note { width: 100%; font-size: 12px; color: rgba(243, 247, 252, .65); text-align: right; }
+.line { position: relative; z-index: 1; margin: 12px 0 0; padding: 10px 12px; border-radius: 14px; font-size: 14px; font-weight: 600; }
+.line.danger { background: rgba(255, 107, 110, .16); color: #FFC2C3; box-shadow: inset 4px 0 0 var(--coral); }
+.line.ice-line { background: rgba(127, 211, 255, .14); color: #CDEFFF; box-shadow: inset 4px 0 0 var(--ice-light); }
+.line.plain { background: rgba(255, 255, 255, .08); color: rgba(243, 247, 252, .82); font-weight: 500; }
+
+/* お知らせ(終了日・途切れ) */
+.notice { border-color: color-mix(in srgb, var(--flame) 45%, var(--line)); background: color-mix(in srgb, var(--flame) 7%, var(--card)); }
+.notice p { margin: 0 0 12px; font-weight: 600; }
+.notice .sub { margin: -6px 0 12px; font-weight: 500; font-size: 14px; color: var(--muted); }
+
+/* ---------- 今日:日課 ---------- */
+.meter { position: relative; height: 6px; margin: -2px 2px 14px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.meter span { position: relative; display: block; height: 100%; border-radius: 999px; background: var(--done); transition: width .45s cubic-bezier(.3, 1.4, .5, 1); }
+.tasks { display: grid; gap: 10px; }
+.task {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 70px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, .05);
+  text-align: left;
+  cursor: pointer;
+  transition: transform .06s, box-shadow .06s, background .2s, border-color .2s;
+}
+.task:active { transform: scale(.985); }
+.task.done { background: var(--done-soft); border-color: color-mix(in srgb, var(--done) 50%, transparent); box-shadow: none; }
+.check {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 3px solid var(--line-deep);
+  border-radius: 50%;
+  color: transparent;
+  transition: background .15s, border-color .15s;
+}
+.check svg { width: 20px; height: 20px; }
+.task.done .check { background: var(--done); border-color: var(--done); color: #fff; animation: tick .3s ease-out; }
+@keyframes tick { 0% { transform: scale(.6); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+.task-body { flex: 1; min-width: 0; }
+.task-name { display: block; font-size: 16px; font-weight: 600; }
+.task.done .task-name { color: var(--done-deep); }
+.task-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin-top: 3px; font-size: 13px; color: var(--muted); }
+.chip {
+  padding: 1px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c);
+  background: var(--soft);
+  background: color-mix(in srgb, var(--c) 14%, transparent);
+}
+@media (prefers-color-scheme: dark) {
+  .chip { color: color-mix(in srgb, var(--c) 55%, white); background: color-mix(in srgb, var(--c) 30%, transparent); }
+}
+.under { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin: 6px 4px 0; min-height: 44px; font-size: 14px; }
+
+/* ---------- 今日:目標までの日数(きっぷ) ---------- */
+.tickets {
+  display: flex;
+  gap: 12px;
+  margin: 0 -16px;
+  padding: 2px 16px 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 16px;
+  scrollbar-width: none;
+}
+.tickets::-webkit-scrollbar { display: none; }
+/* 映画館のチケット:縦長。下の半券との間に切り取り線、左右に半円の切り込み。
+   本体と半券は別々の部品なので、押すと半券がちぎれて落ちる */
+.ticket, .torn-piece {
+  --notch-bottom:
+    radial-gradient(circle 9px at 0 100%, transparent 8.5px, #000 9px) left / 51% 100% no-repeat,
+    radial-gradient(circle 9px at 100% 100%, transparent 8.5px, #000 9px) right / 51% 100% no-repeat;
+  --notch-top:
+    radial-gradient(circle 9px at 0 0, transparent 8.5px, #000 9px) left / 51% 100% no-repeat,
+    radial-gradient(circle 9px at 100% 0, transparent 8.5px, #000 9px) right / 51% 100% no-repeat;
+}
+.ticket {
+  --stub: 76px;
+  flex: none;
+  display: grid;
+  grid-template-rows: 1fr var(--stub);
+  width: 168px;
+  min-height: 232px;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  scroll-snap-align: start;
+  cursor: pointer;
+  transition: transform .1s;
+}
+.ticket:active { transform: scale(.98); }
+.ticket-main {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 18px 14px 14px;
+  border-radius: 14px 14px 0 0;
+  background: var(--card);
+  box-shadow: inset 0 5px 0 var(--c);
+  -webkit-mask: var(--notch-bottom);
+  mask: var(--notch-bottom);
+}
+.ticket-top { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.ticket-kind { font-size: 9px; font-weight: 600; letter-spacing: .22em; color: var(--muted); white-space: nowrap; }
+.ticket-name { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 16px; font-weight: 600; line-height: 1.35; letter-spacing: -.01em; }
+.ticket-date { margin-top: auto; font-size: 12px; line-height: 1.4; color: var(--muted); }
+.ticket-stub {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 3px;
+  padding-top: 14px;
+  border-radius: 0 0 14px 14px;
+  background: color-mix(in srgb, var(--c) 5%, var(--card));
+  color: var(--muted);
+  font-size: 12px;
+  -webkit-mask: var(--notch-top);
+  mask: var(--notch-top);
+}
+/* ちぎるとき:本体の下と半券の上が、ぎざぎざになる */
+.ticket.tearing { pointer-events: none; }
+.ticket.tearing .ticket-main {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 92.86% calc(100% - 5px), 85.71% 100%, 78.57% calc(100% - 5px), 71.43% 100%, 64.29% calc(100% - 5px), 57.14% 100%, 50% calc(100% - 5px), 42.86% 100%, 35.71% calc(100% - 5px), 28.57% 100%, 21.43% calc(100% - 5px), 14.29% 100%, 7.14% calc(100% - 5px), 0% 100%);
+  animation: tug .22s ease-out;
+}
+.ticket.tearing .ticket-stub { visibility: hidden; }
+@keyframes tug { 0% { transform: none; } 45% { transform: translateY(-3px) rotate(-.8deg); } 100% { transform: none; } }
+/* ちぎれた半券(画面の上に浮かせて落とす) */
+.torn-piece {
+  position: fixed;
+  z-index: 30;
+  margin: 0;
+  pointer-events: none;
+  transform-origin: 0 0;
+  clip-path: polygon(0% 5px, 7.14% 0, 14.29% 5px, 21.43% 0, 28.57% 5px, 35.71% 0, 42.86% 5px, 50% 0, 57.14% 5px, 64.29% 0, 71.43% 5px, 78.57% 0, 85.71% 5px, 92.86% 0, 100% 5px, 100% 100%, 0 100%);
+  animation: tear-off .62s cubic-bezier(.45, 0, .8, .45) forwards;
+}
+.torn-piece::before { display: none; }
+@keyframes tear-off {
+  0% { transform: none; opacity: 1; }
+  22% { transform: translate(2px, 4px) rotate(2deg); opacity: 1; }
+  100% { transform: translate(26px, 150px) rotate(18deg); opacity: 0; }
+}
+.ticket-stub::before {
+  /* 切り取り線 */
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, var(--line-deep) 0 5px, transparent 5px 10px);
+}
+.ticket-stub b { font-size: 40px; font-weight: 600; line-height: 1; letter-spacing: -.05em; color: var(--text); font-feature-settings: "tnum"; }
+.ticket-stub b.word { font-size: 22px; letter-spacing: 0; }
+
+/* ---------- 目標の行(目標タブなど) ---------- */
+.goal-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.list > :first-child { border-top: 0; }
+.goal-bar { flex: none; width: 6px; align-self: stretch; border-radius: 6px; background: var(--c); }
+.goal-body { flex: 1; min-width: 0; }
+.goal-name { display: block; font-weight: 600; }
+.goal-left { white-space: nowrap; font-size: 13px; font-weight: 500; color: var(--muted); }
+.goal-left b { font-family: var(--f-num); font-size: 30px; font-weight: 600; line-height: 1; color: var(--text); margin: 0 2px; }
+
+/* 期限が近いステップ */
+.step-row { display: flex; align-items: center; gap: 4px; padding: 6px 12px 6px 6px; border-top: 1px solid var(--line); }
+.check-btn { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border: 0; background: none; cursor: pointer; }
+.check-btn .check { width: 28px; height: 28px; border-width: 3px; }
+.check-btn .check svg { width: 16px; height: 16px; }
+.step-body { flex: 1; min-width: 0; }
+.step-title { font-weight: 500; }
+.step-row.over .when { color: var(--danger); font-weight: 600; }
+.step-row.done .step-title { color: var(--muted); text-decoration: line-through; }
+.step-row.done .check { background: var(--done); border-color: var(--done); color: #fff; }
+
+/* ---------- 目標タブ ---------- */
+.goal-card { padding: 0; overflow: hidden; }
+.goal-head {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 16px 14px;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.goal-head .goal-name { font-size: 17px; }
+.goal-head .goal-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin-top: 3px; font-size: 13px; color: var(--muted); }
+.goal-head .goal-left { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; }
+.chev { display: inline-flex; color: var(--muted); }
+.chev svg { width: 18px; height: 18px; transition: transform .2s; }
+[aria-expanded="true"] .chev svg { transform: rotate(180deg); }
+.progress { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-family: var(--f-num); font-size: 14px; font-weight: 600; color: var(--muted); }
+.progress-track { flex: 1; height: 12px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.progress-fill { display: block; height: 100%; border-radius: 999px; background: var(--c); }
+.goal-detail { border-top: 2px solid var(--line); }
+.goal-habits { padding: 10px 16px 0; }
+.goal-actions { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 16px 16px; border-top: 1px solid var(--line); }
+.icon-btn {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+.icon-btn svg { width: 20px; height: 20px; }
+.add-step {
+  display: block;
+  width: 100%;
+  min-height: 50px;
+  padding: 0 16px;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: none;
+  color: var(--accent);
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.add-btn {
+  width: 100%;
+  min-height: 54px;
+  border: 1.5px dashed var(--line-deep);
+  border-radius: 16px;
+  background: none;
+  color: var(--muted);
+  font-weight: 600;
+  cursor: pointer;
+}
+.section-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 44px;
+  margin: 16px 0 4px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.section-toggle.inner { margin: 0; padding: 0 16px; border-top: 1px solid var(--line); }
+.step-form { display: grid; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--line); background: var(--soft); }
+.inline-field { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--muted); }
+.archived-row { display: grid; grid-template-columns: 6px 1fr; gap: 6px 12px; padding: 12px 16px; border-top: 1px solid var(--line); }
+.archived-row .row { grid-column: 2; }
+.red { color: var(--danger); font-weight: 600; }
+.ok-text { color: var(--done); }
+
+/* ---------- 記録タブ ---------- */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); padding: 14px 4px; text-align: center; }
+.stats > div { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; }
+.stats > div + div { border-left: 2px solid var(--line); }
+.stats b { font-family: var(--f-num); font-size: 36px; font-weight: 600; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.stats span { margin-left: 2px; font-size: 14px; font-weight: 600; }
+.stats small { flex-basis: 100%; font-size: 12px; font-weight: 500; color: var(--muted); }
+.cal { padding: 8px 6px 12px; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; font-size: 17px; font-weight: 600; }
+.cal-head .icon-btn:disabled { opacity: .3; cursor: default; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-wd span { padding: 4px 0; text-align: center; font-size: 12px; font-weight: 600; color: var(--muted); }
+.cal-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  aspect-ratio: 1;
+  min-height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  font-family: var(--f-num);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+}
+.cal-day:disabled { color: var(--muted); opacity: .45; cursor: default; }
+.cal-day.s-done, .cal-day.s-today-done { background: var(--done); color: var(--done-ink); }
+.cal-day.s-freeze { background: var(--ice-soft); color: var(--ice); }
+.cal-day.s-broken { background: var(--danger-soft); color: var(--danger); }
+.cal-day.s-off { background: var(--soft); color: var(--muted); }
+.cal-day.s-today { box-shadow: inset 0 0 0 3px var(--accent); }
+.cal-day.s-today-done { box-shadow: inset 0 0 0 3px var(--accent); }
+.cal-marks { display: flex; align-items: center; gap: 3px; height: 10px; }
+.cal-ice { display: inline-flex; width: 11px; height: 11px; }
+.cal-ice svg { width: 100%; height: 100%; }
+.cal-gym { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.cal-sum { padding: 10px 6px 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 0 4px; font-size: 12px; color: var(--muted); }
+.lg { display: inline-flex; align-items: center; gap: 5px; }
+.lg i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; }
+.lg .l-done { background: var(--done); }
+.lg .l-freeze { background: var(--ice-soft); border: 1px solid var(--ice); }
+.lg .l-broken { background: var(--danger-soft); border: 1px solid var(--danger); }
+.lg .l-off { background: var(--soft); border: 1px solid var(--line-deep); }
+.lg .l-today { box-shadow: inset 0 0 0 2px var(--accent); }
+.lg .l-gym { width: 6px; height: 6px; border-radius: 50%; background: var(--text); }
+.badge { padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; background: var(--soft); color: var(--muted); }
+.badge.s-done { background: var(--done-soft); color: var(--done-deep); }
+.badge.s-freeze { background: var(--ice-soft); color: var(--ice); }
+.badge.s-broken { background: var(--danger-soft); color: var(--danger); }
+.day-sheet h3 { margin-bottom: 10px; }
+.day-sheet p { margin: 8px 0 0; }
+.day-tasks { margin: 12px 0; padding: 0; list-style: none; border: 1px solid var(--line); border-radius: 14px; }
+.day-tasks li { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-top: 1px solid var(--line); }
+.day-tasks li:first-child { border-top: 0; }
+.day-tasks .mark { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; font-weight: 600; }
+.day-tasks .mark svg { width: 15px; height: 15px; }
+.day-tasks .ok .mark { background: var(--done); color: #fff; }
+.day-tasks .ng .mark { background: var(--danger-soft); color: var(--danger); }
+.day-tasks b { display: block; }
+
+/* ---------- 設定タブ ---------- */
+.habit-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 66px;
+  padding: 10px 6px 10px 16px;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.habit-row.ended .task-name { color: var(--muted); }
+.habit-row .icon-btn { pointer-events: none; }
+.set-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 8px 0; border-top: 1px solid var(--line); }
+.set-row:first-child { border-top: 0; padding-top: 0; }
+.set-row:last-child { padding-bottom: 0; }
+.set-row > span { font-weight: 600; }
+.set-row small { display: block; font-size: 12px; font-weight: 500; color: var(--muted); }
+.set-row select { width: auto; min-width: 96px; }
+.set-form { display: grid; gap: 14px; }
+.pw { display: flex; gap: 8px; }
+.pw input { flex: 1; min-width: 0; }
+.status-line { font-size: 14px; }
+.status-line b { color: var(--text); }
+.switch {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: none;
+  width: 54px;
+  height: 32px;
+  margin: 0;
+  border-radius: 999px;
+  background: var(--line-deep);
+  cursor: pointer;
+  transition: background .2s;
+}
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, .18);
+  transition: transform .2s;
+}
+.switch:checked { background: var(--done); }
+.switch:checked::after { transform: translateX(22px); }
+.radio { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; font-weight: 500; color: var(--text); }
+.radio input { width: 20px; height: 20px; margin: 0; accent-color: var(--accent); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.card > p:first-child { margin-top: 0; }
+.card > p:last-child { margin-bottom: 0; }
+
+/* 入力の画面 */
+.goal-form { display: grid; gap: 14px; }
+.goal-form h3 { margin: 0; }
+.field { display: grid; gap: 4px; margin: 0; padding: 0; border: 0; font-size: 13px; font-weight: 600; color: var(--muted); }
+.field legend { padding: 0; margin-bottom: 4px; }
+.field input[type=date] { width: 100%; }
+.hint { font-weight: 500; }
+.swatches { display: flex; flex-wrap: wrap; gap: 2px; }
+.swatch { position: relative; display: grid; place-items: center; width: 44px; height: 44px; cursor: pointer; }
+.swatch input { position: absolute; opacity: 0; pointer-events: none; }
+.swatch span { width: 28px; height: 28px; border-radius: 50%; background: var(--c); }
+.swatch input:checked + span { box-shadow: 0 0 0 3px var(--card), 0 0 0 5px var(--c); }
+.swatch input:focus-visible + span { outline: 2px solid var(--text); outline-offset: 5px; }
+.dlg-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.dlg-actions .spacer { flex: 1; }
+
+/* ---------- 下に浮かぶ切り替え(すりガラスのバー) ---------- */
+.dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.dock-inner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card) 78%, transparent);
+  -webkit-backdrop-filter: saturate(1.6) blur(18px);
+  backdrop-filter: saturate(1.6) blur(18px);
+  box-shadow: 0 12px 32px -12px rgba(16, 24, 40, .35);
+  pointer-events: auto;
+}
+.seg {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--seg-track);
+}
+.seg button {
+  position: relative;
+  z-index: 1;
+  min-width: 68px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color .25s;
+}
+.seg button[aria-selected="true"] { color: var(--seg-on-ink); }
+.seg-ind {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc((100% - 6px) / 3);
+  border-radius: 999px;
+  background: var(--seg-on);
+  transform: translateX(calc(var(--i, 0) * 100%));
+  transition: transform .32s cubic-bezier(.3, .8, .2, 1), opacity .2s;
+}
+.seg.none .seg-ind { opacity: 0; }
+.round-btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+}
+.round-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.round-btn.on { background: var(--seg-on); border-color: var(--seg-on); color: var(--seg-on-ink); }
+/* 全部終えたとき、漁火から火の粉が舞い上がる */
+.sparks { position: absolute; left: 50%; bottom: 18%; width: 0; height: 0; pointer-events: none; }
+.sparks i {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--flame-in);
+  box-shadow: 0 0 8px var(--flame);
+  opacity: 0;
+  animation: spark 1.5s ease-out var(--d) forwards;
+}
+@keyframes spark {
+  0% { opacity: 0; transform: translate(0, 0) scale(1); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--x), -70px) scale(.4); }
+}
+/* 海の波が、ゆっくり流れる */
+.sea { animation: drift 24s linear infinite; }
+@keyframes drift { from { background-position: 0 0; } to { background-position: 120px 0; } }
+/* 完了した目標に押す、はんこ */
+.archived-row { position: relative; }
+.stamp {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  padding: 1px 9px 1px 11px;
+  border: 2px solid var(--coral);
+  border-radius: 7px;
+  color: var(--coral);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .2em;
+  opacity: .85;
+  transform: rotate(-9deg);
+}
+.page-title { margin: 14px 4px 16px; font-size: 28px; font-weight: 600; letter-spacing: -.025em; line-height: 1.2; }
+.view-enter { animation: view-in .26s cubic-bezier(.2, .8, .2, 1); }
+@keyframes view-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* 大きくて細い見出し(今日の日付) */
+.today-date { margin: 14px 4px 16px; font-size: 28px; font-weight: 600; letter-spacing: -.025em; line-height: 1.2; }
+.today-date .sync-note { margin-top: 4px; letter-spacing: 0; }
+
+/* 数字:Interの、間を詰めた数字 */
+.num { font-weight: 600; letter-spacing: -.05em; font-feature-settings: "tnum"; }
+.goal-left b, .stats b { font-weight: 600; letter-spacing: -.04em; }
+
+/* ラベルは小さな札(色は左の点で) */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 8px 1px 7px;
+  border-radius: 7px;
+  background: var(--tag);
+  color: var(--text);
+  font-weight: 500;
+}
+.chip::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
+
+/* 日課:チェックは右側(Runwayの一覧と同じ) */
+.task { flex-direction: row-reverse; padding: 14px 14px 14px 16px; }
+.check { width: 30px; height: 30px; border-width: 2px; }
+.check svg { width: 17px; height: 17px; }
+.task.done .task-name { color: var(--text); }
+.task.done .task-meta { opacity: .75; }
+
+/* お試しモードの帯 */
+.demo-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  padding: 6px 12px;
+  padding-top: calc(6px + env(safe-area-inset-top));
+  background: var(--demo);
+  color: var(--demo-text);
+  font-size: 13px;
+}
+.demo-bar[hidden] { display: none; }
+.demo-bar .demo-now { margin-right: auto; font-weight: 600; }
+.demo-bar button {
+  min-height: 36px;
+  padding: 0 10px;
+  border: 2px solid currentColor;
+  border-radius: 12px;
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* 小さなお知らせ・確認の画面 */
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(84px + env(safe-area-inset-bottom));
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--toast);
+  color: var(--toast-ink);
+  box-shadow: 0 12px 30px -12px rgba(5, 15, 31, .5);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 16px);
+  transition: opacity .2s, transform .2s;
+}
+#toast.show { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
+#toast button { min-height: 36px; border: 0; background: none; color: var(--toast-link); font-weight: 600; text-decoration: underline; cursor: pointer; white-space: nowrap; }
+/* 確認・入力の画面:下からせり上がるシート(Runway風) */
+dialog {
+  width: 100%;
+  max-width: 560px;
+  max-height: 88vh;
+  margin: auto auto 0;
+  overflow: auto;
+  padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
+  border: 0;
+  border-radius: 22px 22px 0 0;
+  background: var(--card);
+  color: var(--text);
+}
+dialog[open] { animation: sheet-up .32s cubic-bezier(.2, .8, .2, 1); }
+dialog::before { content: ''; display: block; width: 38px; height: 5px; margin: 0 auto 14px; border-radius: 3px; background: var(--line-deep); }
+dialog::backdrop { background: rgba(6, 14, 28, .45); animation: fade-in .25s ease; }
+@keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+dialog h3 { margin: 0 0 8px; font-size: 17px; font-weight: 600; text-align: center; }
+dialog p { margin: 0 0 16px; font-size: 14px; color: var(--muted); }
+dialog .dlg-actions { margin-top: 4px; }
+dialog .dlg-actions .btn:not(.link) { flex: 1; }
+
+dialog .ask-input { width: 100%; margin-bottom: 16px; }
+
+/* 動作確認(?test) */
+.test-title { margin: 8px 4px; font-size: 20px; }
+.test-sum { margin: 0 4px 12px; font-weight: 600; }
+.test-item { display: flex; gap: 10px; padding: 10px 16px; border-top: 1px solid var(--line); font-size: 14px; }
+.pass { color: var(--done); font-weight: 600; }
+.fail { color: var(--danger); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div id="demoBar" class="demo-bar" hidden></div>
+<main id="app"><noscript>このサイトはJavaScriptをオンにすると使えます。</noscript></main>
+<nav class="dock" id="tabbar" aria-label="画面の切り替え"></nav>
+<div id="toast" role="status" aria-live="polite"></div>
+<dialog id="dialog"></dialog>
+
+<script type="module">
+// ============================================================
+// 設定(書き換えるのはここだけです)
+// ============================================================
+// Firebaseの config(はじめかた.md の手順1)
+const FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyCSp7-7TLm9jE9jx1wGXmFQtVooKUDOSRI',
+  authDomain: 'nikka-faa2e.firebaseapp.com',
+  projectId: 'nikka-faa2e',
+  storageBucket: 'nikka-faa2e.firebasestorage.app',
+  messagingSenderId: '351585785072',
+  appId: '1:351585785072:web:97dafe37810f9ea53bde35',
+};
+const GAS_URL = '';           // GASのURL(空のままで大丈夫。設定タブで入れたものが使われます)
+
+// ============================================================
+// 日付と時刻 — すべて日本時間で計算します
+// (日本には夏時間がないので、世界標準時に9時間足せば日本時間です)
+// ============================================================
+const HOUR = 3600e3, DAY = 24 * HOUR, JST = 9 * HOUR;
+const WD = ['日', '月', '火', '水', '木', '金', '土'];
+const pad = n => String(n).padStart(2, '0');
+
+function jstParts(ms) {
+  const t = new Date(ms + JST);
+  return { y: t.getUTCFullYear(), m: t.getUTCMonth() + 1, d: t.getUTCDate(), h: t.getUTCHours(), mi: t.getUTCMinutes() };
+}
+function ymd(y, m, d) {
+  const t = new Date(Date.UTC(y, m - 1, d));
+  return `${t.getUTCFullYear()}-${pad(t.getUTCMonth() + 1)}-${pad(t.getUTCDate())}`;
+}
+function parseDate(ds) {
+  const [y, m, d] = ds.split('-').map(Number);
+  return { y, m, d };
+}
+function addDays(ds, n) {
+  const { y, m, d } = parseDate(ds);
+  return ymd(y, m, d + n);
+}
+function diffDays(from, to) {
+  const a = parseDate(from), b = parseDate(to);
+  return Math.round((Date.UTC(b.y, b.m - 1, b.d) - Date.UTC(a.y, a.m - 1, a.d)) / DAY);
+}
+const monthOf = ds => ds.slice(0, 7);
+function dow(ds) {
+  const { y, m, d } = parseDate(ds);
+  return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+}
+// 区切りの時刻(cutoff 時)で切り替わる「その日」の日付
+function logicalDate(ms, cutoff) {
+  const p = jstParts(ms - cutoff * HOUR);
+  return ymd(p.y, p.m, p.d);
+}
+// その日が終わる(次の区切りが来る)瞬間
+function dayEndMs(ds, cutoff) {
+  const { y, m, d } = parseDate(ds);
+  return Date.UTC(y, m - 1, d + 1, cutoff) - JST;
+}
+// その日の hh:mm の瞬間(区切りより前の時刻は、翌日の深夜として扱う)
+function msAt(ds, hh, mm, cutoff) {
+  const { y, m, d } = parseDate(ds);
+  return Date.UTC(y, m - 1, hh < cutoff ? d + 1 : d, hh, mm) - JST;
+}
+function isDate(s) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s || '')) return false;
+  const { y, m, d } = parseDate(s);
+  return ymd(y, m, d) === s;
+}
+const mdShort = ds => { const { m, d } = parseDate(ds); return `${m}/${d}`; };
+const md = ds => `${mdShort(ds)}(${WD[dow(ds)]})`;
+function fmtRemain(ms) {
+  const total = Math.max(0, Math.ceil(ms / 60000)), h = Math.floor(total / 60), m = total % 60;
+  return h && m ? `${h}時間${m}分` : h ? `${h}時間` : `${m}分`;
+}
+
+// ============================================================
+// ストリークの判定 — 画面とは分けた関数です(?test で動作確認できます)
+// ============================================================
+const RESULT_LABEL = { done: '完了', freeze: 'フリーズ', broken: '途切れ', off: 'お休み' };
+
+function newDay(date) {
+  return {
+    date,
+    checks: {},       // 日課ID → チェック済みなら true
+    rest: false,      // 「今日は休む」を使ったか
+    gymManual: false, // 「今日はジムの日にする」を押したか
+    gym: false,       // ジムの日だったか(確定時に保存)
+    tasks: [],        // その日のやるべき日課の控え(名前・ラベル・目安・完了したか)
+    result: null,     // 確定した結果:done / freeze / broken / off
+    freezeUsed: false,
+    freezeBy: null,   // rest(休む)/ auto(自動)
+    streakAfter: null,
+  };
+}
+
+const isActive = (h, ds) => h.start <= ds && (!h.end || ds <= h.end);
+
+// その日のやるべき日課 = 期間内の「毎日」の日課 + ジムの日なら「カレンダー連動」の日課
+function tasksFor(ds, habits, gymDay) {
+  return habits
+    .filter(h => isActive(h, ds) && (h.type === 'daily' || (h.type === 'calendar' && gymDay)))
+    .sort((a, b) => a.order - b.order);
+}
+
+// 1日の判定(ルール1〜5)
+function judgeDay({ taskIds, checks, rest, streak, freezeLeft }) {
+  if (taskIds.length === 0) return { result: 'off', freezeUsed: false, by: null };              // 5
+  if (taskIds.every(id => checks[id])) return { result: 'done', freezeUsed: false, by: null };  // 1
+  if (rest) return { result: 'freeze', freezeUsed: true, by: 'rest' };                          // 2
+  if (streak > 0 && freezeLeft > 0) return { result: 'freeze', freezeUsed: true, by: 'auto' };  // 3(連続0日なら使わない)
+  return { result: 'broken', freezeUsed: false, by: null };                                     // 4
+}
+
+function snapshotTasks(tasks, checks, goals) {
+  return tasks.map(h => {
+    const g = goals[h.goalId];
+    return { id: h.id, name: h.name, label: g ? g.label : '', color: g ? g.color : '', target: h.target || '', calendar: h.type === 'calendar', done: !!checks[h.id] };
+  });
+}
+
+// 最後に確定した日の翌日から until まで、古い日から順番に確定する。変えた場所の一覧を返す
+function finalizeThrough(d, until, gymOf) {
+  const st = d.state, changed = [];
+  const habits = Object.values(d.habits);
+  for (let ds = addDays(st.lastFinalized, 1); ds <= until; ds = addDays(ds, 1)) {
+    const day = d.days[ds] || newDay(ds);
+    const gym = gymOf(ds, day);
+    const tasks = tasksFor(ds, habits, gym);
+    const month = monthOf(ds);
+    const freezeLeft = Math.max(0, d.settings.freezePerMonth - (st.freezeUsed[month] || 0));
+    const j = judgeDay({ taskIds: tasks.map(h => h.id), checks: day.checks, rest: day.rest, streak: st.streak, freezeLeft });
+    const before = st.streak;
+    if (j.result === 'done') st.streak += 1;
+    if (j.result === 'broken') st.streak = 0;
+    if (j.freezeUsed) st.freezeUsed[month] = (st.freezeUsed[month] || 0) + 1;
+    st.best = Math.max(st.best, st.streak);
+    if (j.result === 'broken' && before > 0) st.brokenNotice = { date: ds, lost: before, best: st.best };
+    Object.assign(day, {
+      date: ds,
+      gym,
+      tasks: snapshotTasks(tasks, day.checks, d.goals),
+      result: j.result,
+      freezeUsed: j.freezeUsed,
+      freezeBy: j.by,
+      streakAfter: st.streak,
+    });
+    d.days[ds] = day;
+    st.lastFinalized = ds;
+    changed.push('days/' + ds);
+  }
+  if (changed.length) changed.push('meta/state');
+  return changed;
+}
+
+// 今日(まだ確定していない日)。区切りの時刻を後ろにずらしても、確定済みの日には戻らない
+function effectiveToday(nowMs, cutoff, lastFinalized) {
+  const ld = logicalDate(nowMs, cutoff), next = addDays(lastFinalized, 1);
+  return ld > next ? ld : next;
+}
+
+// 今日の状態(画面に出す数字)
+function todayInfo(d, ds, gymOf) {
+  const day = d.days[ds] || newDay(ds);
+  const gym = gymOf(ds, day);
+  const tasks = tasksFor(ds, Object.values(d.habits), gym);
+  const doneCount = tasks.filter(h => day.checks[h.id]).length;
+  const allDone = tasks.length > 0 && doneCount === tasks.length;
+  const limit = d.settings.freezePerMonth;
+  // 「今日は休む」は先にフリーズを使う。全部終えたら返ってくる
+  const reserved = day.rest && !allDone && tasks.length > 0 ? 1 : 0;
+  const left = Math.max(0, limit - (d.state.freezeUsed[monthOf(ds)] || 0) - reserved);
+  const streakShown = d.state.streak + (allDone ? 1 : 0);
+  return { ds, day, gym, tasks, doneCount, allDone, limit, left, streakBase: d.state.streak, streakShown, best: Math.max(d.state.best, streakShown) };
+}
+
+// 警告:区切りの4時間前を過ぎても未完了なら残り時間を出す
+function warningFor(info, nowMs, cutoff) {
+  if (!info.tasks.length || info.allDone || info.day.rest) return null;
+  const noFreeze = info.streakBase > 0 && info.left === 0;
+  const remain = dayEndMs(info.ds, cutoff) - nowMs;
+  if (remain > 4 * HOUR) return { urgent: false, noFreeze, text: null };
+  const r = fmtRemain(remain);
+  if (info.streakBase === 0) return { urgent: false, noFreeze, text: `あと${r}で今日が終わります` };
+  return {
+    urgent: true,
+    noFreeze,
+    text: info.left === 0 ? `あと${r}でストリークが消えます` : `あと${r}(このままだとフリーズを1回使います)`,
+  };
+}
+
+// ============================================================
+// 目標のステップ — 期限が近い順に並べる(期限なしは最後、同じ期限は並び順)
+// ============================================================
+const NO_DUE = '9999-12-31';
+function sortSteps(steps) {
+  return [...steps].sort((a, b) => (a.due || NO_DUE).localeCompare(b.due || NO_DUE) || a.order - b.order);
+}
+// 同じ期限のステップ同士だけ入れ替える(dir:-1 で上へ、1 で下へ)
+function moveStep(steps, id, dir) {
+  const list = sortSteps(steps.filter(s => !s.done));
+  const i = list.findIndex(s => s.id === id), j = i + dir;
+  if (i < 0 || !list[j] || (list[i].due || null) !== (list[j].due || null)) return false;
+  list.forEach((s, k) => (s.order = k));
+  list[i].order = j;
+  list[j].order = i;
+  return true;
+}
+function dueText(due, base) {
+  const n = diffDays(base, due);
+  return n < 0 ? `期限切れ(${-n}日過ぎ)` : n === 0 ? '今日まで' : `あと${n}日`;
+}
+
+// ============================================================
+// 記録 — 月ごとのカレンダーと達成率
+// ============================================================
+function addMonth(month, n) {
+  const [y, m] = month.split('-').map(Number);
+  const t = new Date(Date.UTC(y, m - 1 + n, 1));
+  return `${t.getUTCFullYear()}-${pad(t.getUTCMonth() + 1)}`;
+}
+// 日曜始まりのカレンダーの升目(月の外は null)
+function monthGrid(month) {
+  const [y, m] = month.split('-').map(Number);
+  const cells = Array(dow(`${month}-01`)).fill(null);
+  const days = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  for (let d = 1; d <= days; d++) cells.push(`${month}-${pad(d)}`);
+  while (cells.length % 7) cells.push(null);
+  return cells;
+}
+// 升目の色:done / freeze / broken / off / today / today-done / none(使い始める前・これから先)
+function dayStatus(d, ds, todayDs, todayAllDone) {
+  if (ds > todayDs || ds < d.state.startDate) return 'none';
+  if (ds === todayDs) return todayAllDone ? 'today-done' : 'today';
+  const day = d.days[ds];
+  return day && day.result ? day.result : 'none';
+}
+// 達成率 = 日課があった日(お休みを除く確定した日)のうち、完了した日の割合。今日は完了したときだけ数える
+function monthStats(d, month, todayDs, todayAllDone) {
+  const counts = { done: 0, freeze: 0, broken: 0, off: 0 };
+  for (const day of Object.values(d.days)) {
+    if (day.result && monthOf(day.date) === month) counts[day.result]++;
+  }
+  let done = counts.done, total = counts.done + counts.freeze + counts.broken;
+  if (todayAllDone && monthOf(todayDs) === month) { done++; total++; }
+  return { counts, done, total, rate: total ? Math.round(done / total * 100) : null };
+}
+
+// ============================================================
+// 初期データ・お試しデータ
+// ============================================================
+const INITIAL_GOALS = [
+  { id: 'g-ielts', name: 'IELTS本番', label: 'IELTS', color: '#3B5BDB', due: '2026-11-12', place: '福岡天神(EIKEN Fukuoka)', archived: false, order: 1, steps: [
+    { id: 's-ielts-mock1', title: '模試(4技能を本番どおりの時間で)', due: '2026-10-24', done: false, doneAt: null, order: 1 },
+    { id: 's-ielts-mock2', title: '模試(4技能を本番どおりの時間で)', due: '2026-10-31', done: false, doneAt: null, order: 2 },
+    { id: 's-ielts-check', title: '受験票・写真付き身分証・会場(天神)を確認', due: '2026-11-10', done: false, doneAt: null, order: 3 },
+    { id: 's-ielts-sleep', title: '前日は早く寝る', due: '2026-11-11', done: false, doneAt: null, order: 4 },
+  ] },
+  { id: 'g-ushibuka', name: '牛深BASEの1日オープン', label: '牛深BASE', color: '#0C8599', due: '2026-12-17', place: '', archived: false, order: 2, steps: [] },
+  { id: 'g-body', name: '見てわかる筋肉質な体になる', label: '体づくり', color: '#7048E8', due: '2026-12-31', place: '', archived: false, order: 3, steps: [] },
+];
+const INITIAL_HABITS = [
+  { id: 'h-vocab', name: '単語帳を読む', goalId: 'g-ielts', target: '50語', type: 'daily', end: '2026-11-12', order: 1 },
+  { id: 'h-listen', name: 'リスニング', goalId: 'g-ielts', target: '過去問1セクション+答え合わせ', type: 'daily', end: '2026-11-12', order: 1.1 },
+  { id: 'h-read', name: 'リーディング', goalId: 'g-ielts', target: '1パッセージを20分で', type: 'daily', end: '2026-11-12', order: 1.2 },
+  { id: 'h-write', name: 'ライティング', goalId: 'g-ielts', target: 'Task1かTask2を1本(交互に)', type: 'daily', end: '2026-11-12', order: 1.3 },
+  { id: 'h-speak', name: 'スピーキング1回', goalId: 'g-ielts', target: 'Part2を1題・録音して聞き直す', type: 'daily', end: '2026-11-12', order: 2 },
+  { id: 'h-meal', name: '食事・プロテイン', goalId: 'g-body', target: '3食+プロテイン', type: 'daily', end: null, order: 3 },
+  { id: 'h-gym', name: 'ジム', goalId: 'g-body', target: '', type: 'calendar', end: null, order: 4 },
+];
+
+const defaultState = start => ({ streak: 0, best: 0, lastFinalized: addDays(start, -1), freezeUsed: {}, startDate: start, brokenNotice: null });
+const defaultSettings = () => ({ freezePerMonth: 2, cutoffHour: 0, gasUrl: '', gasToken: '', gymKeyword: 'ジム', notify: true });
+
+function freshData(start) {
+  const clone = x => JSON.parse(JSON.stringify(x));
+  return {
+    v: 1,
+    goals: Object.fromEntries(INITIAL_GOALS.map(g => [g.id, clone(g)])),
+    habits: Object.fromEntries(INITIAL_HABITS.map(h => [h.id, { ...clone(h), start, endNoticeDismissed: false }])),
+    days: {},
+    state: defaultState(start),
+    settings: defaultSettings(),
+  };
+}
+
+
+const demoGym = ds => [1, 3, 5].includes(dow(ds)); // お試しのジムの予定:月・水・金
+
+// 「今日」の35日前からの記録を作る(完了・ジム・休む・自動フリーズ・途切れ・月またぎを含む)
+function buildDemo(today) {
+  const start = addDays(today, -35);
+  const d = freshData(start);
+  Object.values(d.goals).forEach(g => (g.steps = [])); // お試しデータにはステップを入れない
+  const habits = Object.values(d.habits);
+  let broke = false;
+  for (let i = 0; i < 35; i++) {
+    const ds = addDays(start, i);
+    const day = newDay(ds);
+    const tasks = tasksFor(ds, habits, demoGym(ds));
+    let plan = 'all';
+    if (i === 4) plan = 'rest';                        // 休む → フリーズ
+    else if (i === 6) plan = 'restAll';                // 休んだが全部やった → 完了
+    else if (i === 10 || i === 33) plan = 'partial';   // 一部だけ → 自動フリーズ
+    else if (i >= 18 && !broke) plan = 'skip';         // 開かない日が続き、途切れるまで
+    if (plan === 'rest' || plan === 'restAll') day.rest = true;
+    if (plan === 'all' || plan === 'restAll') tasks.forEach(h => (day.checks[h.id] = true));
+    if (plan === 'partial' && tasks[0]) day.checks[tasks[0].id] = true;
+    if (plan !== 'skip') d.days[ds] = day;
+    finalizeThrough(d, ds, x => demoGym(x));
+    if (d.days[ds].result === 'broken') broke = true;
+  }
+  d.state.brokenNotice = null;
+  return d;
+}
+
+// ============================================================
+// 保存 — 端末の中(localStorage)に保存し、ログイン中はFirebaseにも送ります
+// ============================================================
+const params = new URLSearchParams(location.search);
+const MODE = params.has('demo') ? 'demo' : 'local';
+const clock = { offset: 0, now() { return Date.now() + this.offset; } };
+
+let data;               // すべてのデータ
+let demo = null;        // お試しモードの時計
+let today = null;       // 今日(まだ確定していない日)
+let tab = 'today';
+let brokenShown = null; // 「途切れました」(一度だけ表示)
+let extendOpen = null;  // 終了日を変更中の日課
+let celebrateUntil = 0;
+
+function loadKey(key) {
+  try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch { return null; }
+}
+function save() {
+  try { localStorage.setItem(storeKey(), JSON.stringify({ data, demo })); } catch (e) { console.warn('保存できませんでした', e); }
+}
+// 変えた場所(例:'goals/g-ielts')をまるごと保存する。ログイン中はFirebaseにも送る
+function persist(paths) {
+  save();
+  if (!Sync.owns()) return;
+  for (const p of new Set(paths)) {
+    const doc = docOf(data, p);
+    syncSend(doc ? { path: p, data: plain(doc), merge: p.startsWith('days/') } : { path: p, del: true });
+  }
+}
+// 一部の項目だけ送る(PCとスマホで別々にチェックしても、上書きし合わないように)
+function persistFields(path, fields) {
+  save();
+  if (Sync.owns()) syncSend({ path, data: plain(fields), merge: true });
+}
+
+// ============================================================
+// 同期(Firebase)— ログインしている間は、PCとスマホで同じデータを使います
+// ============================================================
+const FB_VERSION = '12.19.0';
+const FAKE = MODE === 'local' ? params.get('fake') : null; // 開発用:本物のFirebaseの代わりに、仮の同期先を使う(?fake=A)
+const PREFIX = FAKE ? `todo-fake-${FAKE}` : 'todo-v1';
+const UID_KEY = `${PREFIX}-uid`;
+const cacheKey = uid => `${PREFIX}-u-${uid}`;
+const outboxKey = uid => `${PREFIX}-outbox-${uid}`;
+const COLS = ['goals', 'habits', 'days', 'meta'];
+
+const Sync = {
+  enabled: MODE === 'local' && !!(FIREBASE_CONFIG || FAKE),
+  api: null,          // Firebase(または開発用の仮の同期先)
+  loadFailed: false,  // Firebaseを読み込めなかった(オフラインなど)
+  user: null,         // ログイン中のアカウント { uid, email }
+  uidHint: null,      // 前回ログインしていたアカウント(Firebaseの準備ができる前に使う)
+  loading: false,     // 初めてのログインで、データを準備している間
+  loaded: new Set(),  // 最初の読み込みが済んだ場所
+  meta: {},           // 場所ごとの { fromCache, pending }
+  inflight: 0,        // 送っている途中の書き込みの数
+  finalizing: false,
+  retryAt: 0,
+  error: null,
+  unsub: null,
+  uid() { return this.user ? this.user.uid : this.uidHint; },
+  owns() { return !!this.uid(); },
+  offline() { return !navigator.onLine || this.loadFailed || !!(this.api && this.api.offline && this.api.offline()); },
+};
+
+function storeKey() {
+  if (MODE === 'demo') return 'todo-v1-demo';
+  return Sync.owns() ? cacheKey(Sync.uid()) : PREFIX;
+}
+const plain = o => JSON.parse(JSON.stringify(o));
+// 中身が同じかどうか(項目の順番は気にしない)
+const stable = v => JSON.stringify(v ?? null, (k, x) => x && typeof x === 'object' && !Array.isArray(x)
+  ? Object.fromEntries(Object.entries(x).sort(([a], [b]) => (a < b ? -1 : 1))) : x);
+
+function docOf(d, path) {
+  const [col, id] = path.split('/');
+  if (col === 'meta') return id === 'state' ? d.state : id === 'settings' ? d.settings : null;
+  return (d[col] && d[col][id]) || null;
+}
+const allDocPaths = d => [
+  ...['goals', 'habits', 'days'].flatMap(col => Object.keys(d[col]).map(id => `${col}/${id}`)),
+  'meta/state', 'meta/settings',
+];
+
+// Firebaseを公式の配信元から読み込む
+async function loadFirebase() {
+  const url = name => `https://www.gstatic.com/firebasejs/${FB_VERSION}/firebase-${name}.js`;
+  const [appM, A, F] = await Promise.all([import(url('app')), import(url('auth')), import(url('firestore'))]);
+  const app = appM.initializeApp(FIREBASE_CONFIG);
+  const auth = A.getAuth(app);
+  let db;
+  try {
+    // 端末の中にも写しを持ち、オフライン中の書き込みはつながったら自動で送る
+    db = F.initializeFirestore(app, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) });
+  } catch (e) {
+    db = F.getFirestore(app);
+  }
+  A.getRedirectResult(auth).catch(e => toast(`ログインできませんでした(${e.code || e.message})`));
+  const ref = (uid, path) => F.doc(db, 'users', uid, ...path.split('/'));
+  return {
+    onAuth: cb => A.onAuthStateChanged(auth, cb),
+    async signIn() {
+      const provider = new A.GoogleAuthProvider();
+      try {
+        await A.signInWithPopup(auth, provider);
+      } catch (e) {
+        // ポップアップが使えない環境では、ページを移動してログインする
+        if (['auth/popup-blocked', 'auth/operation-not-supported-in-this-environment'].includes(e.code)) await A.signInWithRedirect(auth, provider);
+        else throw e;
+      }
+    },
+    signOut: () => A.signOut(auth),
+    listen(uid, onChange) {
+      const unsubs = COLS.map(col => F.onSnapshot(
+        F.collection(db, 'users', uid, col),
+        { includeMetadataChanges: true },
+        snap => onChange({
+          col,
+          changes: snap.docChanges().map(c => ({ id: c.doc.id, data: c.type === 'removed' ? null : c.doc.data() })),
+          fromCache: snap.metadata.fromCache,
+          pending: snap.metadata.hasPendingWrites,
+        }),
+        error => onChange({ col, error }),
+      ));
+      return () => unsubs.forEach(u => u());
+    },
+    write(uid, op) {
+      const r = ref(uid, op.path);
+      return op.del ? F.deleteDoc(r) : F.setDoc(r, op.data, op.merge ? { merge: true } : {});
+    },
+    async readServer(uid, path) {
+      const s = await F.getDocFromServer(ref(uid, path));
+      return s.exists() ? s.data() : null;
+    },
+    async batch(uid, ops) {
+      for (let i = 0; i < ops.length; i += 400) {
+        const b = F.writeBatch(db);
+        ops.slice(i, i + 400).forEach(o => b.set(ref(uid, o.path), o.data));
+        await b.commit();
+      }
+    },
+    transact: (uid, fn) => F.runTransaction(db, tx => fn({
+      get: async path => { const s = await tx.get(ref(uid, path)); return s.exists() ? s.data() : null; },
+      set: (path, value, merge) => { tx.set(ref(uid, path), value, merge ? { merge: true } : {}); },
+    })),
+    async clearCache() {
+      await F.terminate(db);
+      await F.clearIndexedDbPersistence(db);
+    },
+  };
+}
+
+async function startSync() {
+  try {
+    Sync.api = FAKE ? fakeAdapter(FAKE) : await loadFirebase();
+    Sync.loadFailed = false;
+  } catch (e) {
+    console.warn('Firebaseを読み込めませんでした', e);
+    Sync.loadFailed = true;
+    updateStatus();
+    window.addEventListener('online', startSync, { once: true });
+    return;
+  }
+  Sync.api.onAuth(user => (user ? signedIn(user) : signedOut()));
+}
+
+async function signedIn(user) {
+  if (Sync.user && Sync.user.uid === user.uid) return;
+  const uid = user.uid;
+  if (Sync.uidHint !== uid) {
+    // この端末で初めてのログイン:クラウドが空なら、この端末のデータを移す
+    Sync.loading = true;
+    render();
+    let remote;
+    try {
+      remote = await Sync.api.readServer(uid, 'meta/state');
+    } catch (e) {
+      Sync.loading = false;
+      render();
+      toast('クラウドに接続できませんでした。オンラインのときに、もう一度ログインしてください');
+      await Sync.api.signOut();
+      return;
+    }
+    if (!remote) {
+      await Sync.api.batch(uid, allDocPaths(data).map(p => ({ path: p, data: plain(docOf(data, p)) })));
+      localStorage.removeItem(PREFIX);
+      Sync.loading = false;
+      toast('この端末のデータをクラウドに保存しました');
+    } else {
+      // クラウドのデータを使う(読み込みが終わるまで「読み込んでいます」と表示)
+      data = { v: 1, goals: {}, habits: {}, days: {}, state: { ...defaultState(remote.startDate || today), ...remote }, settings: defaultSettings() };
+      toast('クラウドのデータを読み込みます');
+    }
+    Sync.uidHint = uid;
+    localStorage.setItem(UID_KEY, uid);
+  }
+  Sync.user = { uid, email: user.email || '' };
+  Sync.loaded.clear();
+  Sync.meta = {};
+  // ログインの確認中にした変更を送る
+  const box = loadKey(outboxKey(uid)) || [];
+  localStorage.removeItem(outboxKey(uid));
+  box.forEach(syncSend);
+  Sync.unsub = Sync.api.listen(uid, onRemote);
+  save();
+  refreshDay();
+  render();
+}
+
+// ログインが切れたとき:この端末だけのデータに戻る
+function signedOut() {
+  if (!Sync.owns() && !Sync.loading) {
+    if (tab === 'settings') softRender();
+    return;
+  }
+  if (Sync.unsub) Sync.unsub();
+  Object.assign(Sync, { unsub: null, user: null, uidHint: null, loading: false, meta: {}, error: null });
+  Sync.loaded.clear();
+  localStorage.removeItem(UID_KEY);
+  const saved = loadKey(PREFIX);
+  data = saved && saved.data && saved.data.v === 1 ? saved.data : freshData(logicalDate(clock.now(), 0));
+  refreshDay();
+  render();
+}
+
+function syncSend(op) {
+  if (Sync.user && Sync.api) {
+    Sync.inflight++;
+    updateStatus();
+    Sync.api.write(Sync.user.uid, op)
+      .then(() => { Sync.error = null; })
+      .catch(e => { Sync.error = e.code || e.message || String(e); console.warn('同期できませんでした', e); })
+      .finally(() => { Sync.inflight--; updateStatus(); });
+  } else {
+    // ログインの確認がまだ:端末にためておき、確認できたら送る
+    const key = outboxKey(Sync.uid());
+    try { localStorage.setItem(key, JSON.stringify([...(loadKey(key) || []), op])); } catch {}
+  }
+}
+
+// クラウドの変更(他の端末での変更を含む)を受け取る
+function onRemote(ev) {
+  if (ev.error) {
+    Sync.error = ev.error.code || ev.error.message || String(ev.error);
+    updateStatus();
+    return;
+  }
+  Sync.meta[ev.col] = { fromCache: ev.fromCache, pending: ev.pending };
+  let changed = false, calendarChanged = false;
+  for (const { id, data: raw } of ev.changes) {
+    if (ev.col === 'meta') {
+      if (!raw || (id !== 'state' && id !== 'settings')) continue;
+      const next = id === 'state' ? { ...defaultState(raw.startDate || today), ...raw } : { ...defaultSettings(), ...raw };
+      if (stable(next) === stable(data[id])) continue;
+      if (id === 'settings') {
+        const calKeys = s => stable([s.gasUrl, s.gasToken, s.gymKeyword, s.cutoffHour]);
+        calendarChanged = calKeys(next) !== calKeys(data.settings);
+      }
+      data[id] = next;
+      changed = true;
+      continue;
+    }
+    const box = data[ev.col];
+    if (!raw) {
+      if (box[id]) { delete box[id]; changed = true; }
+      continue;
+    }
+    const next = ev.col === 'days' ? { ...newDay(id), ...raw, date: id } : ev.col === 'goals' ? { steps: [], ...raw } : raw;
+    if (stable(next) !== stable(box[id])) { box[id] = next; changed = true; }
+  }
+  Sync.loaded.add(ev.col);
+  if (Sync.loading && Sync.loaded.size === COLS.length) {
+    Sync.loading = false;
+    changed = true;
+  }
+  if (changed) {
+    save();
+    refreshDay();
+    softRender();
+  }
+  if (calendarChanged) fetchCalendar(); // ほかの端末でカレンダー連携の設定を変えたとき
+  updateStatus();
+  maybeFinalize();
+}
+
+// ログイン中の日の確定:サーバーと確認できているときだけ、1台だけが確定する
+async function maybeFinalize() {
+  if (!Sync.user || Sync.finalizing || Sync.loading || Date.now() < Sync.retryAt) return;
+  const until = addDays(today, -1);
+  if (data.state.lastFinalized >= until) return;
+  if (Sync.offline() || Sync.loaded.size < COLS.length || COLS.some(c => Sync.meta[c] && Sync.meta[c].fromCache)) return;
+  Sync.finalizing = true;
+  try {
+    const result = await Sync.api.transact(Sync.user.uid, async tx => {
+      const st = await tx.get('meta/state');
+      if (!st || st.lastFinalized >= until) return null; // ほかの端末が確定済み
+      const temp = {
+        goals: data.goals, habits: data.habits, settings: data.settings, days: {},
+        state: { ...defaultState(st.startDate || today), ...st, freezeUsed: { ...(st.freezeUsed || {}) } },
+      };
+      const end = [until, addDays(temp.state.lastFinalized, 400)].sort()[0]; // 1回に確定するのは400日分まで
+      const dates = [];
+      for (let ds = addDays(temp.state.lastFinalized, 1); ds <= end; ds = addDays(ds, 1)) dates.push(ds);
+      for (const ds of dates) {
+        const raw = await tx.get('days/' + ds);
+        if (raw) temp.days[ds] = { ...newDay(ds), ...raw, date: ds };
+      }
+      finalizeThrough(temp, end, gymOf);
+      for (const ds of dates) tx.set('days/' + ds, plain(temp.days[ds]), true);
+      tx.set('meta/state', plain(temp.state), false);
+      return temp;
+    });
+    if (result) {
+      data.state = result.state;
+      Object.assign(data.days, result.days);
+      save();
+    }
+  } catch (e) {
+    console.warn('日の確定ができませんでした', e);
+    Sync.retryAt = Date.now() + 60000;
+    return;
+  } finally {
+    Sync.finalizing = false;
+  }
+  refreshDay();
+  softRender();
+}
+
+function syncState() {
+  if (MODE === 'demo') return { key: 'demo', text: 'お試しモード' };
+  if (!Sync.enabled) return { key: 'none', text: '未設定(この端末だけに保存)' };
+  if (!Sync.owns()) return { key: 'local', text: '未ログイン(この端末だけに保存)' };
+  if (Sync.error) return { key: 'error', text: '同期できません' };
+  if (Sync.offline()) return { key: 'offline', text: 'オフライン' };
+  const busy = !Sync.user || Sync.loading || Sync.inflight > 0 || Sync.loaded.size < COLS.length
+    || COLS.some(c => Sync.meta[c] && (Sync.meta[c].pending || Sync.meta[c].fromCache));
+  return busy ? { key: 'syncing', text: '同期中' } : { key: 'synced', text: '同期済み' };
+}
+// 今日タブの日付の下に出す小さなお知らせ
+function syncNote() {
+  if (!Sync.owns()) return '';
+  const key = syncState().key, notes = [];
+  if (key === 'offline') notes.push('オフライン:つながったら自動で同期します');
+  if (key === 'error') notes.push('同期できません(設定タブで確認できます)');
+  if (data.state.lastFinalized < addDays(today, -1)) notes.push('前の日の結果は、同期できたら確定します');
+  return notes.join('/');
+}
+function updateStatus() {
+  const a = document.getElementById('syncStatus');
+  if (a) a.textContent = syncState().text;
+  const b = document.getElementById('syncNote');
+  if (b) b.textContent = syncNote();
+}
+
+// 入力中や確認の画面を開いている間は、画面の描き直しを待つ
+let renderPending = false;
+const isBusy = () => document.getElementById('dialog').open || ['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement && document.activeElement.tagName);
+function softRender() {
+  if (isBusy()) { renderPending = true; return; }
+  renderPending = false;
+  render();
+}
+function flushRender() {
+  setTimeout(() => { if (renderPending && !isBusy()) { renderPending = false; render(); } }, 0);
+}
+
+// ---------- 開発用:本物のFirebaseの代わりの仮の同期先(?fake=A と ?fake=B を別のタブで開くと、2台の端末の代わりになる) ----------
+function fakeAdapter(dev) {
+  const SKEY = 'todo-fake-server', AKEY = `todo-fake-auth-${dev}`;
+  const readAll = () => loadKey(SKEY) || {};
+  const full = (uid, path) => `users/${uid}/${path}`;
+  const deepMerge = (a, b) => {
+    for (const [k, v] of Object.entries(b)) {
+      const obj = x => x && typeof x === 'object' && !Array.isArray(x);
+      a[k] = obj(v) && obj(a[k]) ? deepMerge(a[k], v) : v;
+    }
+    return a;
+  };
+  let online = true, authCb = null;
+  const queue = [], subs = new Set();
+  const emit = () => { if (online) subs.forEach(f => f()); }; // オフライン中は、ほかの端末の変更は届かない
+  const apply = ops => {
+    const s = readAll();
+    for (const o of ops) {
+      const k = full(o.uid, o.path);
+      if (o.del) delete s[k];
+      else s[k] = o.merge && s[k] ? deepMerge(s[k], plain(o.data)) : plain(o.data);
+    }
+    localStorage.setItem(SKEY, JSON.stringify(s));
+    emit();
+  };
+  window.addEventListener('storage', e => { if (e.key === SKEY) emit(); });
+  const api = {
+    offline: () => !online,
+    onAuth(cb) { authCb = cb; cb(loadKey(AKEY)); },
+    async signIn() { const u = { uid: 'fake-user', email: 'test@example.com' }; localStorage.setItem(AKEY, JSON.stringify(u)); authCb(u); },
+    async signOut() { localStorage.removeItem(AKEY); authCb(null); },
+    listen(uid, onChange) {
+      const seen = {};
+      const f = () => {
+        const s = readAll();
+        for (const col of COLS) {
+          const pre = `users/${uid}/${col}/`, now = {};
+          for (const [k, v] of Object.entries(s)) if (k.startsWith(pre)) now[k.slice(pre.length)] = v;
+          const changes = Object.entries(now).map(([id, v]) => ({ id, data: plain(v) }));
+          for (const id of Object.keys(seen[col] || {})) if (!(id in now)) changes.push({ id, data: null });
+          seen[col] = now;
+          onChange({ col, changes, fromCache: !online, pending: queue.length > 0 });
+        }
+      };
+      subs.add(f);
+      setTimeout(f);
+      return () => subs.delete(f);
+    },
+    write(uid, op) {
+      if (online) { apply([{ ...op, uid }]); return Promise.resolve(); }
+      return new Promise(res => queue.push({ op: { ...op, uid }, res }));
+    },
+    async readServer(uid, path) {
+      if (!online) throw new Error('offline');
+      return readAll()[full(uid, path)] || null;
+    },
+    async batch(uid, ops) { apply(ops.map(o => ({ ...o, uid }))); },
+    async transact(uid, fn) {
+      if (!online) throw new Error('offline');
+      for (let attempt = 0; attempt < 5; attempt++) {
+        const reads = {}, writes = [];
+        const result = await fn({
+          get: async p => { const v = readAll()[full(uid, p)] || null; reads[p] = stable(v); return v && plain(v); },
+          set: (p, value, merge) => { writes.push({ uid, path: p, data: value, merge }); },
+        });
+        const s = readAll();
+        if (Object.entries(reads).every(([p, j]) => stable(s[full(uid, p)] || null) === j)) { apply(writes); return result; }
+      }
+      throw new Error('transaction failed');
+    },
+    async clearCache() {},
+    setOnline(v) {
+      online = v;
+      if (v) {
+        const q = queue.splice(0);
+        apply(q.map(x => x.op));
+        q.forEach(x => x.res());
+      }
+      emit();
+      subs.forEach(f => f()); // 「オフライン」の状態を画面に知らせる
+      window.dispatchEvent(new Event(v ? 'online' : 'offline'));
+    },
+  };
+  window.__fake = api;
+  window.__dev = { clock, tick, Sync, get data() { return data; } };
+  return api;
+}
+
+// ============================================================
+// Googleカレンダー連携(GAS)— 「ジム」の予定がある日付だけを読み込みます
+// ============================================================
+const CAL_KEY = `${PREFIX}-calendar`;
+const Calendar = {
+  dates: new Set(), // ジムの日(端末の中にも保存しておく)
+  status: null,     // 最後の読み込み { ok, at, okAt, error }
+  loading: false,
+  has(ds) { return MODE === 'demo' ? demoGym(ds) : this.dates.has(ds); },
+  load() {
+    const c = loadKey(CAL_KEY);
+    if (c) { this.dates = new Set(c.dates || []); this.status = c.status || null; }
+  },
+  save() {
+    try { localStorage.setItem(CAL_KEY, JSON.stringify({ dates: [...this.dates], status: this.status })); } catch {}
+  },
+};
+// カレンダーでジムの日か:その日の記録に残した結果(ほかの端末が読み込んだ分)を優先する
+const calGymOf = (ds, day) => (day && typeof day.gymCal === 'boolean' ? day.gymCal : Calendar.has(ds));
+const gymOf = (ds, day) => !!(day && day.gymManual) || calGymOf(ds, day);
+const gasReady = () => MODE !== 'demo' && !!(data.settings.gasUrl || GAS_URL) && !!data.settings.gasToken;
+
+// GASに問い合わせる(合言葉は自動で付ける)。うまくいかないときは、わかりやすい理由で止まる
+async function gasFetch(params) {
+  const url = (data.settings.gasUrl || GAS_URL).trim();
+  const q = new URLSearchParams({ token: data.settings.gasToken, ...params });
+  let res;
+  try {
+    res = await fetch(`${url}${url.includes('?') ? '&' : '?'}${q}`);
+  } catch {
+    throw new Error('つながりませんでした。URL、GASの公開設定、ネットの接続を確かめてください');
+  }
+  if (!res.ok) throw new Error(`読み込めませんでした(${res.status})`);
+  const text = (await res.text()).trim();
+  if (!text) throw new Error('合言葉が違うようです');
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error('GASから正しい返事がありませんでした。公開設定を確かめてください');
+  }
+}
+
+// 過去7日〜未来14日を読み込む(まだ確定していない日が前にあれば、そこから。最大60日)
+async function fetchCalendar(manual = false) {
+  if (!gasReady() || Calendar.loading) return;
+  let from = addDays(today, -7);
+  const pending = addDays(data.state.lastFinalized, 1);
+  if (pending < from) from = [pending, addDays(today, -45)].sort()[1];
+  const to = addDays(today, 14);
+  const prev = Calendar.status || {};
+  Calendar.loading = true;
+  softRender();
+  try {
+    const json = await gasFetch({ from, to, keyword: data.settings.gymKeyword, cutoff: String(data.settings.cutoffHour) });
+    if (!Array.isArray(json.dates)) {
+      throw new Error(json.error === 'calendar' ? 'カレンダーが見つかりませんでした。GASのカレンダーIDを確かめてください' : 'GASから正しい返事がありませんでした');
+    }
+    // 今回読んだ範囲は入れ替え、それより前の分(60日以内)は残す
+    const keep = [...Calendar.dates].filter(d => (d < from || d > to) && d >= addDays(today, -60));
+    Calendar.dates = new Set([...keep, ...json.dates.filter(isDate)]);
+    Calendar.status = { ok: true, at: Date.now(), okAt: Date.now(), error: null };
+  } catch (e) {
+    Calendar.status = { ok: false, at: Date.now(), okAt: prev.okAt || null, error: e.message };
+  } finally {
+    Calendar.loading = false;
+  }
+  Calendar.save();
+  if (Calendar.status.ok) recordCalendar();
+  softRender();
+  if (manual) toast(Calendar.status.ok ? 'カレンダーを読み込みました' : `カレンダーを読み込めませんでした:${Calendar.status.error}`);
+}
+
+// ============================================================
+// LINE通知 — 今日の状態(数字だけ)をGASに送ります。通知はGASが送ります
+// ============================================================
+const REPORT_KEY = `${PREFIX}-report`;
+let reportTimer = null;
+
+// GASに送る今日の状態。日課の名前などは送らない
+function statusForGas() {
+  const i = info();
+  return {
+    date: today,
+    done: i.allDone ? '1' : '0',
+    rest: i.day.rest ? '1' : '0',
+    count: String(i.doneCount),
+    tasks: String(i.tasks.length),
+    streak: String(i.streakBase),
+    freeze: String(i.left),
+    cutoff: String(data.settings.cutoffHour),
+    notify: data.settings.notify === false ? '0' : '1',
+    site: location.protocol === 'https:' ? location.origin + location.pathname : '',
+  };
+}
+// 状態が変わったら、少し待ってから送る(同じ内容は6時間に1回だけ)
+function scheduleReport() {
+  if (!gasReady() || Sync.loading || !today) return;
+  const st = statusForGas(), key = stable(st);
+  const last = loadKey(REPORT_KEY) || {};
+  if (last.key === key && Date.now() - last.at < 6 * HOUR) return;
+  if (last.ok === false && Date.now() - last.at < 10 * 60000) return; // 失敗したら10分あける
+  clearTimeout(reportTimer);
+  reportTimer = setTimeout(() => sendReport(st, key), 2000);
+}
+async function sendReport(st, key) {
+  let result;
+  try {
+    const json = await gasFetch({ action: 'status', ...st });
+    if (!json.ok) throw new Error(json.error === 'date' ? 'GASのコードが古いようです(段階6の完成版に貼り替えてください)' : 'GASから正しい返事がありませんでした');
+    result = { key, at: Date.now(), ok: true };
+  } catch (e) {
+    result = { key: null, at: Date.now(), ok: false, error: e.message };
+  }
+  try { localStorage.setItem(REPORT_KEY, JSON.stringify(result)); } catch {}
+  if (tab === 'settings') softRender();
+}
+
+// まだ確定していない日に、ジムの日かどうかを記録する(当日中に予定が変わったら、日課にも反映される)
+function recordCalendar() {
+  for (let ds = addDays(data.state.lastFinalized, 1); ds <= today; ds = addDays(ds, 1)) {
+    const has = Calendar.dates.has(ds), day = data.days[ds];
+    if ((day ? day.gymCal : undefined) === has || (!day && !has)) continue;
+    ensureDay(ds).gymCal = has;
+    persistFields('days/' + ds, { date: ds, gymCal: has });
+  }
+}
+
+const ensureDay = ds => (data.days[ds] ||= newDay(ds));
+const info = () => todayInfo(data, today, gymOf);
+
+// 今日の記録で変えた項目を保存する(例:{ checks: { 'h-vocab': true } })
+function saveToday(fields) {
+  if (fields) persistFields('days/' + today, { date: today, ...fields });
+  else save();
+}
+
+// 日付が変わっていたら、前の日までを確定する
+function refreshDay() {
+  today = effectiveToday(clock.now(), data.settings.cutoffHour, data.state.lastFinalized);
+  if (Sync.owns()) {
+    maybeFinalize(); // ログイン中は、クラウドと確認しながら確定する
+  } else {
+    const changed = finalizeThrough(data, addDays(today, -1), gymOf);
+    if (changed.length) persist(changed);
+  }
+  if (data.state.brokenNotice) {
+    brokenShown = data.state.brokenNotice;
+    data.state.brokenNotice = null;
+    if (Sync.owns()) persistFields('meta/state', { brokenNotice: null });
+    else persist(['meta/state']);
+  }
+}
+
+function tick() {
+  const before = today;
+  refreshDay();
+  if (today !== before) {
+    extendOpen = null;
+    render();
+  } else {
+    updateLive();
+  }
+}
+
+// ============================================================
+// 画面
+// ============================================================
+const ICON = {
+  flame: '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="outer" d="M12.4 1.6c.5 3 2.3 4.7 4 6.5 1.6 1.8 3.1 3.7 3.1 6.7a7.5 7.5 0 0 1-15 0c0-2.6 1.2-4.6 2.8-6.1.2 1.6 1 2.8 2.3 3.4-.6-4 .6-7.6 2.8-10.5z"/><path class="inner" d="M12.1 12.4c1.8 1.5 3.4 2.9 3.4 5a3.5 3.5 0 0 1-7 0c0-1.5.8-2.7 2-3.6.2.8.6 1.3 1.2 1.6-.3-1.1-.1-2.1.4-3z"/></svg>',
+  check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  ice: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 2.5v19M3.8 7.25l16.4 9.5M3.8 16.75l16.4-9.5"/><path d="M9.3 4.6 12 7.2l2.7-2.6M9.3 19.4 12 16.8l2.7 2.6"/></svg>',
+  today: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 12.3l2.4 2.4 4.6-5"/></svg>',
+  goals: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4M6 4h11l-2.2 4.2L17 12.4H6"/></svg>',
+  record: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
+  settings: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>',
+  close: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  chev: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+  up: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg>',
+  down: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>',
+  left: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>',
+  right: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
+};
+// 目標のラベルの色
+const PALETTE = ['#3B5BDB', '#0C8599', '#7048E8', '#E8590C', '#D6336C', '#2B8A3E', '#F59F00', '#495057'];
+const MAIN_TABS = [['today', '今日'], ['goals', '目標'], ['record', '記録']];
+// 火の粉(横にずれる量と、出るまでの時間)
+const SPARKS = `<span class="sparks" aria-hidden="true">${[[-26, 0], [18, .08], [-8, .18], [30, .26], [-34, .34], [6, .42], [22, .55], [-16, .62]]
+  .map(([x, d]) => `<i style="--x:${x}px;--d:${d}s"></i>`).join('')}</span>`;
+let lastMainTab = 'today'; // 設定を閉じたときに戻る画面
+let renderedTab = null;
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const safeColor = c => (/^#[0-9a-f]{3,8}$/i.test(c || '') ? c : '#868E96');
+const chip = g => `<span class="chip" style="--c:${safeColor(g.color)}">${esc(g.label)}</span>`;
+const activeGoals = () => Object.values(data.goals).filter(g => !g.archived && g.due).sort((a, b) => a.due.localeCompare(b.due) || a.order - b.order);
+
+function render() {
+  renderDemoBar();
+  const app = document.getElementById('app');
+  if (Sync.loading) app.innerHTML = '<div class="card empty" style="margin-top:24px">クラウドと同期しています…</div>';
+  else if (tab === 'today') app.innerHTML = renderToday();
+  else if (tab === 'goals') app.innerHTML = renderGoals();
+  else if (tab === 'record') app.innerHTML = renderRecord();
+  else app.innerHTML = renderSettings();
+  // 画面を切り替えたときだけ、ふわっと出す
+  if (renderedTab !== null && renderedTab !== tab) {
+    app.classList.remove('view-enter');
+    void app.offsetWidth;
+    app.classList.add('view-enter');
+  }
+  renderedTab = tab;
+  renderTabbar();
+  scheduleReport(); // 今日の状態が変わっていたら、LINE通知のためにGASへ送る
+}
+
+// 下に浮かぶ切り替え。選んだところに丸い枠がすべって動く。右の丸いボタンで設定を開き、× で閉じる
+function renderTabbar() {
+  const bar = document.getElementById('tabbar');
+  if (!bar.querySelector('.dock-inner')) {
+    bar.innerHTML = `
+      <div class="dock-inner">
+        <div class="seg" role="tablist">
+          ${MAIN_TABS.map(([id, label]) => `<button role="tab" data-act="tab" data-tab="${id}">${label}</button>`).join('')}
+          <span class="seg-ind"></span>
+        </div>
+        <button class="round-btn" data-act="tab"></button>
+      </div>`;
+  }
+  // 作り直さずに位置だけ変えると、枠がすべって動く
+  const i = MAIN_TABS.findIndex(([id]) => id === tab);
+  const seg = bar.querySelector('.seg');
+  seg.style.setProperty('--i', Math.max(i, 0));
+  seg.classList.toggle('none', i < 0);
+  seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
+  const btn = bar.querySelector('.round-btn');
+  const inSettings = tab === 'settings';
+  btn.dataset.tab = inSettings ? lastMainTab : 'settings';
+  btn.setAttribute('aria-label', inSettings ? '設定を閉じる' : '設定');
+  btn.classList.toggle('on', inSettings);
+  btn.innerHTML = inSettings ? ICON.close : ICON.settings;
+}
+
+function renderToday() {
+  const i = info();
+  const { m, d } = parseDate(today);
+  return `
+    <div class="today-date">${m}月${d}日(${WD[dow(today)]})<span class="sync-note" id="syncNote">${esc(syncNote())}</span></div>
+    ${renderStreak(i)}
+    ${renderBroken()}
+    ${renderEndNotices()}
+    ${renderChecklist(i)}
+    ${renderCountdown()}
+    ${renderUpcoming()}`;
+}
+
+function renderStreak(i) {
+  const w = warningFor(i, clock.now(), data.settings.cutoffHour);
+  const s = !i.tasks.length ? 'off' : i.allDone ? 'lit' : i.day.rest ? 'rest' : w && w.urgent ? 'urgent' : 'cold';
+  const celebrate = Date.now() < celebrateUntil;
+  const pill = !i.tasks.length ? '<span class="pill">お休み</span>'
+    : i.allDone ? '<span class="pill ok">今日 完了</span>'
+    : i.day.rest ? '<span class="pill rest">今日は休み</span>'
+    : '<span class="pill">今日まだ</span>';
+  const ices = Array.from({ length: i.limit }, (_, k) => `<span class="ice ${k < i.left ? 'on' : ''}">${ICON.ice}</span>`).join('');
+  const freeze = i.limit ? `${ices} フリーズ 残り<b>${i.left}</b>回` : '今月のフリーズ なし';
+
+  let lines = '';
+  if (i.day.rest && !i.allDone) lines += '<p class="line ice-line">今日は休みの日です(フリーズを1回使用中)。全部終えれば「完了」になり、フリーズは戻ります。</p>';
+  if (i.day.rest && i.allDone) lines += '<p class="line plain">全部終わったので、フリーズは戻りました。</p>';
+  if (w && w.urgent) lines += `<p class="line danger">${w.text}</p>`;
+  else if (w && w.noFreeze) lines += '<p class="line danger">フリーズなし:今日やらないと0日に戻ります</p>';
+  if (w && !w.urgent && w.text) lines += `<p class="line plain">${w.text}</p>`;
+
+  let actions = '';
+  if (i.tasks.length && !i.allDone && i.streakBase > 0) {
+    if (i.day.rest) actions = '<button class="btn" data-act="unrest">休みを取り消す</button>';
+    else if (i.left > 0) actions = '<button class="btn" data-act="rest">今日は休む</button>';
+    else actions = '<button class="btn" disabled>今日は休む</button><span class="note">フリーズが残っていないため使えません</span>';
+  }
+
+  return `
+    <section id="streakCard" class="hero s-${s} ${celebrate ? 'celebrate' : ''}" aria-label="連続${i.streakShown}日">
+      <div class="hero-top">${pill}<span class="hero-best">最高<b>${i.best}</b>日</span></div>
+      <div class="hero-main">
+        <span class="flame">${ICON.flame}${celebrate ? SPARKS : ''}</span>
+        <span class="hero-count"><span class="num">${i.streakShown}</span><span class="unit">日連続</span></span>
+      </div>
+      ${celebrate ? '<div class="cheer">+1</div>' : ''}
+      <div class="sea">${weekLights(i)}</div>
+      <div class="hero-foot"><span class="freeze">${freeze}</span>${actions}</div>
+      ${lines}
+    </section>`;
+}
+
+// 水平線に並ぶ、この7日間の灯り(完了=灯る、フリーズ=氷、途切れ=点線)
+function weekLights(i) {
+  const lights = [];
+  for (let k = 6; k >= 0; k--) {
+    const ds = addDays(today, -k);
+    let st = dayStatus(data, ds, today, i.allDone);
+    if (ds === today && st === 'today' && i.day.rest) st = 'rest';
+    const label = `${md(ds)} ${STATUS_LABEL[st] || ''}`;
+    lights.push(`
+      <li class="wl w-${st}" aria-label="${label}">
+        <span class="wl-dot">${st === 'freeze' || st === 'rest' ? ICON.ice : ''}</span>
+        <span class="wl-day">${ds === today ? '今日' : WD[dow(ds)]}</span>
+      </li>`);
+  }
+  return `<ol class="week" aria-label="この7日間">${lights.join('')}</ol>`;
+}
+
+function renderBroken() {
+  if (!brokenShown) return '';
+  return `
+    <section class="card notice">
+      <p>ストリークが途切れました(最高記録:${brokenShown.best}日)</p>
+      <p class="sub">${md(brokenShown.date)}で途切れました。今日からまた1日目です。</p>
+      <button class="btn" data-act="dismissBroken">閉じる</button>
+    </section>`;
+}
+
+// 終了日の3日前から出すお知らせ(終了日が同じ日課は1つにまとめる)
+function renderEndNotices() {
+  const groups = new Map();
+  Object.values(data.habits)
+    .filter(h => h.end && !h.endNoticeDismissed && h.start <= today && today <= h.end && diffDays(today, h.end) <= 3)
+    .sort((a, b) => a.end.localeCompare(b.end) || a.order - b.order)
+    .forEach(h => groups.set(h.end, [...(groups.get(h.end) || []), h]));
+  return [...groups].map(([end, hs]) => {
+    const names = hs.map(h => `『${esc(h.name)}』`).join('');
+    const ids = hs.map(h => h.id).join(',');
+    return extendOpen === ids ? `
+      <section class="card notice">
+        <p>${names}の新しい終了日</p>
+        <div class="row">
+          <input type="date" id="extendDate" value="${end}" min="${today}" aria-label="新しい終了日">
+          <button class="btn primary" data-act="saveExtend" data-ids="${ids}">保存</button>
+          <button class="btn" data-act="cancelExtend">やめる</button>
+        </div>
+      </section>` : `
+      <section class="card notice">
+        <p>${names}は${mdShort(end)}で終了します。延長しますか?</p>
+        <div class="row">
+          <button class="btn primary" data-act="extend" data-ids="${ids}">延長する(終了日を変更)</button>
+          <button class="btn" data-act="endKeep" data-ids="${ids}">このまま終了</button>
+        </div>
+      </section>`;
+  }).join('');
+}
+
+function renderChecklist(i) {
+  const rows = i.tasks.map(h => {
+    const g = data.goals[h.goalId];
+    const done = !!i.day.checks[h.id];
+    const target = h.target && h.target !== '―' ? `<span>目安:${esc(h.target)}</span>` : '';
+    const src = h.type === 'calendar' ? `<span>${calGymOf(today, i.day) ? 'カレンダーの予定' : '手動で追加'}</span>` : '';
+    return `
+      <button class="task ${done ? 'done' : ''}" data-act="toggle" data-id="${h.id}" aria-pressed="${done}">
+        <span class="check">${ICON.check}</span>
+        <span class="task-body">
+          <span class="task-name">${esc(h.name)}</span>
+          <span class="task-meta">${g ? chip(g) : ''}${target}${src}</span>
+        </span>
+      </button>`;
+  }).join('');
+  const hasCalendarHabit = Object.values(data.habits).some(h => h.type === 'calendar' && isActive(h, today));
+  let under = '';
+  if (hasCalendarHabit && !i.gym) under = '<button class="btn link" data-act="gymOn">今日はジムの日にする</button><span class="muted small">(カレンダーが読めないとき用)</span>';
+  else if (i.day.gymManual && !calGymOf(today, i.day)) under = '<button class="btn link" data-act="gymOff">ジムの日をやめる</button>';
+  // 読み込みに失敗しても日課は使える(前回の結果を使い、小さくお知らせだけ出す)
+  if (gasReady() && Calendar.status && !Calendar.status.ok) under += '<span class="muted small">カレンダーを読み込めませんでした</span>';
+  const pct = i.tasks.length ? Math.round(i.doneCount / i.tasks.length * 100) : 0;
+  const meter = `<div class="meter" role="progressbar" aria-label="今日の日課の進み具合" aria-valuemin="0" aria-valuemax="${i.tasks.length}" aria-valuenow="${i.doneCount}"><span style="width:${pct}%"></span></div>`;
+  return `
+    <h2>今日の日課${i.tasks.length ? `<span class="count">${i.doneCount}/${i.tasks.length}</span>` : ''}</h2>
+    ${i.tasks.length ? `${meter}<div class="tasks">${rows}</div>` : '<div class="card empty">今日の日課はありません(お休みの日)</div>'}
+    ${under ? `<div class="under">${under}</div>` : ''}`;
+}
+
+function renderCountdown() {
+  const goals = activeGoals();
+  if (!goals.length) return '';
+  // 目標ごとの、映画館のチケットのような横長の券。右の半券に「あと○日」。横にスクロールできる
+  return `
+    <h2>目標まで</h2>
+    <div class="tickets">${goals.map(g => {
+      const n = diffDays(today, g.due);
+      const stub = n > 0 ? `<small>あと</small><b>${n}</b><small>日</small>`
+        : n === 0 ? '<b class="word">本日</b>' : `<b class="word">終了</b><small>${-n}日前</small>`;
+      return `
+        <button class="ticket" data-act="ticketOpen" data-goal="${g.id}" style="--c:${safeColor(g.color)}" aria-label="${esc(g.name)} ${n >= 0 ? `あと${n}日` : '期限を過ぎました'}">
+          <span class="ticket-main">
+            <span class="ticket-top"><span class="chip">${esc(g.label)}</span><span class="ticket-kind">ADMIT ONE</span></span>
+            <span class="ticket-name">${esc(g.name)}</span>
+            <span class="ticket-date">${md(g.due)}${g.place ? '・' + esc(g.place) : ''}</span>
+          </span>
+          <span class="ticket-stub">${stub}</span>
+        </button>`;
+    }).join('')}</div>`;
+}
+
+// 7日以内が期限の、未完了のステップ(期限切れは赤)
+function renderUpcoming() {
+  const limit = addDays(today, 7);
+  const items = [];
+  for (const g of activeGoals()) for (const s of g.steps || []) if (!s.done && s.due && s.due <= limit) items.push({ g, s });
+  items.sort((a, b) => a.s.due.localeCompare(b.s.due) || a.s.order - b.s.order);
+  const body = items.length ? items.map(({ g, s }) => {
+    const when = dueText(s.due, today);
+    return `
+      <div class="step-row ${s.due < today ? 'over' : ''}">
+        <button class="check-btn" data-act="stepDone" data-goal="${g.id}" data-step="${s.id}" aria-label="「${esc(s.title)}」を完了にする"><span class="check">${ICON.check}</span></button>
+        <div class="step-body">
+          <div class="step-title">${esc(s.title)}</div>
+          <div class="task-meta">${chip(g)}<span class="when">${md(s.due)}・${when}</span></div>
+        </div>
+      </div>`;
+  }).join('') : '<div class="empty">7日以内が期限のステップはありません</div>';
+  return `<h2>期限が近いステップ</h2><div class="card list">${body}</div>`;
+}
+
+// ---------- 目標タブ ----------
+const openGoals = new Set(); // 開いている目標
+const openDone = new Set();  // 「完了したステップ」を開いている目標
+let stepForm = null;         // 入力中のステップ { goal, step }(step が null なら追加)
+let showArchived = false;
+
+function renderGoals() {
+  const archived = Object.values(data.goals).filter(g => g.archived)
+    .sort((a, b) => (b.archivedAt || '').localeCompare(a.archivedAt || ''));
+  return `
+    <h1 class="page-title">目標</h1>
+    ${activeGoals().map(renderGoalCard).join('') || '<div class="card empty">目標はまだありません</div>'}
+    <button class="add-btn" data-act="goalNew">+ 目標を追加</button>
+    ${archived.length ? `
+      <button class="section-toggle" data-act="toggleArchived" aria-expanded="${showArchived}">完了した目標(${archived.length})<span class="chev">${ICON.chev}</span></button>
+      ${showArchived ? `<div class="card list">${archived.map(renderArchivedRow).join('')}</div>` : ''}` : ''}`;
+}
+
+function renderGoalCard(g) {
+  const open = openGoals.has(g.id);
+  const steps = g.steps || [];
+  const done = steps.filter(s => s.done).length;
+  const n = diffDays(today, g.due);
+  const left = n > 0 ? `<span>あと<b>${n}</b>日</span>` : n === 0 ? '<span><b>今日</b></span>' : `<span class="red">${-n}日過ぎ</span>`;
+  const progress = steps.length
+    ? `<span class="progress-track"><span class="progress-fill" style="width:${Math.round(done / steps.length * 100)}%"></span></span><span>${done}/${steps.length}</span>`
+    : '<span>ステップはまだありません</span>';
+  return `
+    <section class="card goal-card" id="goal-${g.id}" style="--c:${safeColor(g.color)}">
+      <button class="goal-head" data-act="goalToggle" data-goal="${g.id}" aria-expanded="${open}">
+        <span class="goal-bar"></span>
+        <span class="goal-body">
+          <span class="goal-name">${esc(g.name)}</span>
+          <span class="goal-sub">${chip(g)}<span>${md(g.due)}${g.place ? '・' + esc(g.place) : ''}</span></span>
+          <span class="progress">${progress}</span>
+        </span>
+        <span class="goal-left">${left}<span class="chev">${ICON.chev}</span></span>
+      </button>
+      ${open ? renderGoalDetail(g) : ''}
+    </section>`;
+}
+
+function renderGoalDetail(g) {
+  const steps = g.steps || [];
+  const active = sortSteps(steps.filter(s => !s.done));
+  const done = sortSteps(steps.filter(s => s.done));
+  const editing = s => stepForm && stepForm.goal === g.id && stepForm.step === s.id;
+  const adding = stepForm && stepForm.goal === g.id && !stepForm.step;
+  const sameDue = (a, b) => !!a && !!b && (a.due || null) === (b.due || null);
+  const rows = active.map((s, k) => editing(s) ? renderStepForm(g, s)
+    : renderStepRow(g, s, sameDue(active[k - 1], s), sameDue(s, active[k + 1]))).join('');
+  const habits = Object.values(data.habits).filter(h => h.goalId === g.id && (!h.end || h.end >= today)).sort((a, b) => a.order - b.order);
+  return `
+    <div class="goal-detail">
+      ${habits.length ? `<div class="goal-habits muted small">日課:${habits.map(h => esc(h.name)).join('、')}</div>` : ''}
+      ${rows ? `<div class="list">${rows}</div>` : ''}
+      ${adding ? renderStepForm(g, null) : `<button class="add-step" data-act="stepNew" data-goal="${g.id}">+ ステップを追加</button>`}
+      ${done.length ? `
+        <button class="section-toggle inner" data-act="toggleDone" data-goal="${g.id}" aria-expanded="${openDone.has(g.id)}">完了したステップ(${done.length})<span class="chev">${ICON.chev}</span></button>
+        ${openDone.has(g.id) ? `<div class="list">${done.map(s => editing(s) ? renderStepForm(g, s) : renderStepRow(g, s, false, false)).join('')}</div>` : ''}` : ''}
+      <div class="goal-actions">
+        <button class="btn" data-act="goalEdit" data-goal="${g.id}">目標を編集</button>
+        <button class="btn" data-act="goalArchive" data-goal="${g.id}">目標を完了にする</button>
+      </div>
+    </div>`;
+}
+
+function renderStepRow(g, s, canUp, canDown) {
+  const over = !s.done && s.due && s.due < today;
+  const when = s.done ? `完了${s.doneAt ? ' ' + md(s.doneAt) : ''}` : s.due ? `${md(s.due)}・${dueText(s.due, today)}` : '期限なし';
+  const ids = `data-goal="${g.id}" data-step="${s.id}"`;
+  return `
+    <div class="step-row ${s.done ? 'done' : ''} ${over ? 'over' : ''}">
+      <button class="check-btn" data-act="${s.done ? 'stepUndo' : 'stepDone'}" ${ids} aria-label="「${esc(s.title)}」を${s.done ? '未完了に戻す' : '完了にする'}"><span class="check">${ICON.check}</span></button>
+      <div class="step-body">
+        <div class="step-title">${esc(s.title)}</div>
+        <div class="task-meta"><span class="when">${when}</span></div>
+      </div>
+      ${canUp ? `<button class="icon-btn" data-act="stepMove" data-dir="-1" ${ids} aria-label="上へ">${ICON.up}</button>` : ''}
+      ${canDown ? `<button class="icon-btn" data-act="stepMove" data-dir="1" ${ids} aria-label="下へ">${ICON.down}</button>` : ''}
+      <button class="icon-btn" data-act="stepEdit" ${ids} aria-label="「${esc(s.title)}」を編集">${ICON.edit}</button>
+    </div>`;
+}
+
+function renderStepForm(g, s) {
+  return `
+    <form class="step-form" data-act="stepSave" data-goal="${g.id}" data-step="${s ? s.id : ''}">
+      <input type="text" name="title" value="${s ? esc(s.title) : ''}" placeholder="ステップの内容(例:会場の下見をする)" maxlength="80" required aria-label="ステップの内容">
+      <label class="inline-field">期限 <input type="date" name="due" value="${s && s.due ? s.due : ''}"></label>
+      <div class="row">
+        <button class="btn primary">${s ? '保存' : '追加'}</button>
+        <button type="button" class="btn" data-act="stepCancel">${s ? 'やめる' : '閉じる'}</button>
+        ${s ? `<button type="button" class="btn link danger" data-act="stepDelete" data-goal="${g.id}" data-step="${s.id}">削除</button>` : ''}
+      </div>
+    </form>`;
+}
+
+function renderArchivedRow(g) {
+  const steps = g.steps || [], done = steps.filter(s => s.done).length;
+  return `
+    <div class="archived-row" style="--c:${safeColor(g.color)}">
+      <span class="stamp" aria-hidden="true">完了</span>
+      <span class="goal-bar"></span>
+      <div class="goal-body">
+        <div class="goal-name">${esc(g.name)}</div>
+        <div class="muted small">期限 ${md(g.due)}${g.archivedAt ? `・${md(g.archivedAt)}に完了` : ''}${steps.length ? `・ステップ ${done}/${steps.length}` : ''}</div>
+      </div>
+      <div class="row">
+        <button class="btn" data-act="goalRestore" data-goal="${g.id}">元に戻す</button>
+        <button class="btn link danger" data-act="goalDelete" data-goal="${g.id}">削除</button>
+      </div>
+    </div>`;
+}
+
+// 目標の追加・編集の画面
+function openGoalForm(g) {
+  const used = new Set(activeGoals().map(x => x.color));
+  const color = g ? g.color : PALETTE.find(c => !used.has(c)) || PALETTE[0];
+  const dlg = document.getElementById('dialog');
+  dlg.onclose = null;
+  dlg.innerHTML = `
+    <form class="goal-form" data-act="goalSave" data-goal="${g ? g.id : ''}">
+      <h3>${g ? '目標を編集' : '目標を追加'}</h3>
+      <label class="field">目標名
+        <input type="text" name="name" value="${g ? esc(g.name) : ''}" placeholder="例:IELTS本番" maxlength="40" required>
+      </label>
+      <label class="field">ラベル(短い名前)
+        <input type="text" name="label" value="${g ? esc(g.label) : ''}" placeholder="例:IELTS" maxlength="10" required>
+        <span class="hint">日課やステップの横に、この色で表示されます</span>
+      </label>
+      <fieldset class="field">
+        <legend>ラベルの色</legend>
+        <div class="swatches">${PALETTE.map(c => `
+          <label class="swatch" style="--c:${c}"><input type="radio" name="color" value="${c}" ${c === color ? 'checked' : ''} aria-label="色 ${c}"><span></span></label>`).join('')}
+        </div>
+      </fieldset>
+      <label class="field">期限
+        <input type="date" name="due" value="${g ? g.due : ''}" required>
+      </label>
+      <label class="field">場所(任意)
+        <input type="text" name="place" value="${g ? esc(g.place || '') : ''}" placeholder="例:福岡天神" maxlength="30">
+      </label>
+      <div class="dlg-actions">
+        ${g ? `<button type="button" class="btn link danger" data-act="goalDelete" data-goal="${g.id}">削除</button>` : ''}
+        <span class="spacer"></span>
+        <button type="button" class="btn" data-act="closeDialog">やめる</button>
+        <button class="btn primary">保存</button>
+      </div>
+    </form>`;
+  dlg.showModal();
+}
+
+// ---------- 記録タブ ----------
+let recMonth = null; // 表示している月(null なら今月)
+const STATUS_LABEL = { done: '完了', freeze: 'フリーズ', broken: '途切れ', off: 'お休み', today: '今日(途中)', 'today-done': '今日(完了)', rest: '今日(休み)', none: '' };
+
+function renderRecord() {
+  const i = info();
+  const month = recMonth || monthOf(today);
+  const [y, m] = month.split('-').map(Number);
+  const s = monthStats(data, month, today, i.allDone);
+  const c = s.counts;
+  return `
+    <h1 class="page-title">記録</h1>
+    <div class="card stats">
+      <div><b>${i.streakShown}</b><span>日</span><small>今の連続</small></div>
+      <div><b>${i.best}</b><span>日</span><small>最高記録</small></div>
+      <div><b>${s.rate ?? '—'}</b><span>${s.rate == null ? '' : '%'}</span><small>${month === monthOf(today) ? '今月' : `${m}月`}の達成率</small></div>
+    </div>
+    <div class="card cal">
+      <div class="cal-head">
+        <button class="icon-btn" data-act="recMove" data-dir="-1" ${month <= monthOf(data.state.startDate) ? 'disabled' : ''} aria-label="前の月">${ICON.left}</button>
+        <b>${y}年${m}月</b>
+        <button class="icon-btn" data-act="recMove" data-dir="1" ${month >= monthOf(today) ? 'disabled' : ''} aria-label="次の月">${ICON.right}</button>
+      </div>
+      <div class="cal-grid cal-wd">${WD.map(w => `<span>${w}</span>`).join('')}</div>
+      <div class="cal-grid">${monthGrid(month).map(ds => ds ? renderCalDay(ds, i) : '<span></span>').join('')}</div>
+      <div class="cal-sum muted small">完了 ${c.done}日・フリーズ ${c.freeze}日・途切れ ${c.broken}日・お休み ${c.off}日</div>
+    </div>
+    <div class="legend">
+      <span class="lg"><i class="l-done"></i>完了</span>
+      <span class="lg"><i class="l-freeze"></i>フリーズ</span>
+      <span class="lg"><i class="l-broken"></i>途切れ</span>
+      <span class="lg"><i class="l-off"></i>お休み</span>
+      <span class="lg"><i class="l-gym"></i>ジムの日</span>
+      <span class="lg"><i class="l-today"></i>今日</span>
+    </div>
+    <p class="muted small" style="margin:10px 4px 0">日付をタップすると、その日の日課が見られます。</p>`;
+}
+
+function renderCalDay(ds, i) {
+  const st = dayStatus(data, ds, today, i.allDone);
+  const day = data.days[ds];
+  const gym = ds === today ? i.gym : day && day.result ? day.gym : ds > today && Calendar.has(ds);
+  const label = `${md(ds)}${STATUS_LABEL[st] ? ' ' + STATUS_LABEL[st] : ''}${gym ? '・ジムの日' : ''}`;
+  return `
+    <button class="cal-day s-${st}" ${st === 'none' ? 'disabled' : `data-act="dayOpen" data-date="${ds}"`} aria-label="${label}">
+      <span>${parseDate(ds).d}</span>
+      <span class="cal-marks">${st === 'freeze' ? `<span class="cal-ice">${ICON.ice}</span>` : ''}${gym ? '<span class="cal-gym"></span>' : ''}</span>
+    </button>`;
+}
+
+// その日の詳細(過去の日は見るだけ)
+function openDayDetail(ds) {
+  const i = info();
+  const isToday = ds === today;
+  const day = isToday ? i.day : data.days[ds];
+  if (!day) return;
+  const tasks = isToday ? snapshotTasks(i.tasks, i.day.checks, data.goals) : day.tasks || [];
+  const { m, d } = parseDate(ds);
+  let head;
+  if (isToday) {
+    head = `<span class="badge ${i.allDone ? 's-done' : ''}">${i.allDone ? '完了(まだ確定前)' : 'まだ途中'}</span>`;
+  } else {
+    const how = day.result === 'freeze' ? (day.freezeBy === 'rest' ? '(「今日は休む」を使用)' : '(自動で使用)') : '';
+    head = `<span class="badge s-${day.result}">${RESULT_LABEL[day.result]}${how}</span><span class="muted small">この日の終わりの連続日数:${day.streakAfter}日</span>`;
+  }
+  const notes = [];
+  if (!isToday && day.rest && day.result === 'done') notes.push('「今日は休む」を使いましたが、全部終えたのでフリーズは戻りました。');
+  if (isToday ? i.gym : day.gym) notes.push(`ジムの日(${day.gymManual ? '手動で追加' : 'カレンダーの予定'})`);
+  if (!tasks.length) notes.push('やるべき日課はありませんでした。');
+  const list = tasks.map(t => `
+    <li class="${t.done ? 'ok' : 'ng'}">
+      <span class="mark">${t.done ? ICON.check : '×'}</span>
+      <span><b>${esc(t.name)}</b><span class="task-meta">${t.label ? `<span class="chip" style="--c:${safeColor(t.color)}">${esc(t.label)}</span>` : ''}${t.target ? `<span>目安:${esc(t.target)}</span>` : ''}</span></span>
+    </li>`).join('');
+  const dlg = document.getElementById('dialog');
+  dlg.onclose = null;
+  dlg.innerHTML = `
+    <div class="day-sheet">
+      <h3>${m}月${d}日(${WD[dow(ds)]})</h3>
+      <div class="row">${head}</div>
+      ${notes.map(n => `<p class="muted small">${n}</p>`).join('')}
+      ${list ? `<ul class="day-tasks">${list}</ul>` : ''}
+      <p class="muted small">${isToday ? '今日の分は「今日」タブでチェックできます。区切りの時刻に確定します。' : '過去の日は見るだけで、変更できません。'}</p>
+      <div class="dlg-actions" style="margin-top:16px">
+        ${isToday ? '<button class="btn" data-act="goToday">今日タブへ</button>' : ''}
+        <button class="btn primary" data-act="closeDialog">閉じる</button>
+      </div>
+    </div>`;
+  dlg.showModal();
+}
+
+// ---------- 設定タブ ----------
+function renderSettings() {
+  const st = data.settings;
+  const ended = h => !!h.end && h.end < today;
+  const habits = Object.values(data.habits).sort((a, b) => ended(a) - ended(b) || a.order - b.order);
+  const opts = (values, cur, fmt) => values.map(v => `<option value="${v}" ${v === cur ? 'selected' : ''}>${fmt(v)}</option>`).join('');
+  return `
+    <h1 class="page-title">設定</h1>
+    <h2>日課</h2>
+    <div class="card list">${habits.map(renderHabitRow).join('') || '<div class="empty">日課はまだありません</div>'}</div>
+    <button class="add-btn" data-act="habitNew">+ 日課を追加</button>
+
+    <h2>ストリーク</h2>
+    <div class="card">
+      <label class="set-row">
+        <span>フリーズの月の回数<small>毎月1日に戻ります(繰り越しなし)</small></span>
+        <select data-change="setFreeze">${opts([0, 1, 2, 3, 4, 5], st.freezePerMonth, v => `${v}回`)}</select>
+      </label>
+      <label class="set-row">
+        <span>1日の区切りの時刻<small>この時刻に、その日の結果が確定します</small></span>
+        <select data-change="setCutoff">${opts([0, 1, 2, 3, 4, 5, 6], st.cutoffHour, v => `${v}:00`)}</select>
+      </label>
+    </div>
+
+    <h2>Googleカレンダー連携</h2>
+    <form class="card set-form" data-act="calSave">
+      <label class="field">GASのURL
+        <input type="url" name="gasUrl" value="${esc(st.gasUrl || GAS_URL)}" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off">
+      </label>
+      <label class="field">合言葉
+        <span class="pw">
+          <input type="password" name="gasToken" value="${esc(st.gasToken)}" autocomplete="off">
+          <button type="button" class="btn" data-act="togglePw">表示</button>
+        </span>
+      </label>
+      <label class="field">ジムの予定を見分けるキーワード
+        <input type="text" name="gymKeyword" value="${esc(st.gymKeyword)}" maxlength="20" required>
+        <span class="hint">予定のタイトルにこの言葉が入っていると、ジムの日になります</span>
+      </label>
+      <div class="row"><button class="btn primary">保存</button></div>
+      <div class="status-line muted">${calendarStatusHtml()}</div>
+      <div class="row">
+        <button type="button" class="btn" data-act="calFetch" ${gasReady() && !Calendar.loading ? '' : 'disabled'}>今すぐ読み込む</button>
+      </div>
+    </form>
+
+    ${renderNotify()}
+
+    ${renderAccount()}`;
+}
+
+function calendarStatusHtml() {
+  if (MODE === 'demo') return '状態:お試しモードでは、月・水・金をジムの日として扱います。';
+  if (!gasReady()) return '状態:未設定です。URLと合言葉を入れて保存すると、読み込みます。';
+  if (Calendar.loading) return '状態:読み込んでいます…';
+  const s = Calendar.status;
+  if (!s) return '状態:まだ読み込んでいません。';
+  const when = ms => { const p = jstParts(ms); return `${p.m}/${p.d} ${pad(p.h)}:${pad(p.mi)}`; };
+  const next = [...Calendar.dates].filter(d => d >= today && d <= addDays(today, 14)).sort().slice(0, 6).map(md).join('、');
+  const result = s.ok
+    ? `<b class="ok-text">成功</b>(${when(s.at)})`
+    : `<b class="red">失敗</b>(${when(s.at)}):${esc(s.error)}${s.okAt ? `<br>前回うまく読み込めた ${when(s.okAt)} の結果を使っています。` : ''}`;
+  return `最後の読み込み:${result}<br>これから2週間のジムの日:${next || 'なし'}`;
+}
+
+function renderNotify() {
+  const st = data.settings;
+  const at = 4, hour = (st.cutoffHour + 24 - at) % 24;
+  let status;
+  if (MODE === 'demo') status = 'お試しモードでは、GASに送りません。';
+  else if (!gasReady()) status = '上の「Googleカレンダー連携」にGASのURLと合言葉を入れると使えます。';
+  else {
+    const r = loadKey(REPORT_KEY);
+    const when = ms => { const p = jstParts(ms); return `${p.m}/${p.d} ${pad(p.h)}:${pad(p.mi)}`; };
+    status = !r ? 'GASにはまだ今日の状態を送っていません。'
+      : r.ok ? `GASに今日の状態を送りました(${when(r.at)})。`
+      : `GASに送れませんでした(${when(r.at)}):${esc(r.error)}`;
+  }
+  return `
+    <h2>LINE通知</h2>
+    <div class="card">
+      <label class="set-row">
+        <span>日課が終わっていない日に、LINEで知らせる<small>区切りの4時間前ごろ(いまの設定では${hour}時ごろ)に、1日1回だけ届きます</small></span>
+        <input type="checkbox" class="switch" data-change="setNotify" ${st.notify === false ? '' : 'checked'} aria-label="LINE通知">
+      </label>
+      <p class="muted small">GASに送るのは「今日の日課が何個中何個終わったか・連続日数・フリーズの残り」だけで、日課の名前は送りません。LINEのつなぎ方は、GASのスクリプト プロパティで設定します。</p>
+      <p class="status-line muted">${status}</p>
+      <div class="row">
+        <button type="button" class="btn" data-act="lineTest" ${gasReady() ? '' : 'disabled'}>テスト通知を送る</button>
+      </div>
+    </div>`;
+}
+
+function renderAccount() {
+  let body, btn = '<button class="btn" disabled>Googleでログイン</button>';
+  if (MODE === 'demo') {
+    body = 'お試しモードでは、本物のデータには触れず、この端末の中だけで動きます。';
+  } else if (!Sync.enabled) {
+    body = 'Firebaseの設定がまだです。index.html の先頭に Firebase の config を貼ると、ログインできるようになります。';
+  } else if (Sync.user) {
+    body = `${esc(Sync.user.email)} でログイン中です。PCとスマホで同じデータを使えます。`;
+    btn = '<button class="btn" data-act="logout">ログアウト</button>';
+  } else if (Sync.uidHint) {
+    body = 'ログインを確認しています…(オフラインのときは、この端末の写しで動きます)';
+    btn = '';
+  } else {
+    body = 'ログインすると、PCとスマホで同じデータを使えます。初めてログインしたときは、この端末のデータをクラウドに移します(クラウドにすでにデータがあれば、そちらを使います)。';
+    btn = '<button class="btn primary" data-act="login">Googleでログイン</button>';
+  }
+  if (FAKE) body += '(開発用の仮の同期先を使っています)';
+  const err = Sync.error
+    ? `<p class="small red">同期できません(${esc(Sync.error)})。Firestoreのセキュリティルールと、ネットの接続を確かめてください。</p>` : '';
+  return `
+    <h2>ログインと同期</h2>
+    <div class="card">
+      <p class="status-line">状態:<b id="syncStatus">${syncState().text}</b></p>
+      <p class="muted small">${body}</p>
+      ${err}
+      ${btn}
+    </div>`;
+}
+
+function renderHabitRow(h) {
+  const g = data.goals[h.goalId];
+  const state = h.end && h.end < today ? '(終了)' : h.start > today ? '(開始前)' : '';
+  return `
+    <button class="habit-row ${h.end && h.end < today ? 'ended' : ''}" data-act="habitEdit" data-habit="${h.id}">
+      <span class="task-body">
+        <span class="task-name">${esc(h.name)}</span>
+        <span class="task-meta">
+          ${g ? chip(g) : '<span>ラベルなし</span>'}
+          ${h.target ? `<span>目安:${esc(h.target)}</span>` : ''}
+          <span>${h.type === 'calendar' ? 'カレンダー連動' : '毎日'}</span>
+          <span>${mdShort(h.start)}〜${h.end ? mdShort(h.end) : ''}${state}</span>
+        </span>
+      </span>
+      <span class="icon-btn">${ICON.edit}</span>
+    </button>`;
+}
+
+// 日課の追加・編集の画面
+function openHabitForm(h) {
+  const goals = Object.values(data.goals).sort((a, b) => a.archived - b.archived || a.due.localeCompare(b.due));
+  const type = h ? h.type : 'daily';
+  const dlg = document.getElementById('dialog');
+  dlg.onclose = null;
+  dlg.innerHTML = `
+    <form class="goal-form" data-act="habitSave" data-habit="${h ? h.id : ''}">
+      <h3>${h ? '日課を編集' : '日課を追加'}</h3>
+      <label class="field">名前
+        <input type="text" name="name" value="${h ? esc(h.name) : ''}" placeholder="例:単語帳を読む" maxlength="30" required>
+      </label>
+      <label class="field">ラベル(どの目標のための日課か)
+        <select name="goalId">
+          <option value="">ラベルなし</option>
+          ${goals.map(g => `<option value="${g.id}" ${h && h.goalId === g.id ? 'selected' : ''}>${esc(g.label)}(${esc(g.name)})${g.archived ? '・完了した目標' : ''}</option>`).join('')}
+        </select>
+      </label>
+      <label class="field">目安(表示するだけ)
+        <input type="text" name="target" value="${h ? esc(h.target || '') : ''}" placeholder="例:50語、1回・5分" maxlength="30">
+      </label>
+      <fieldset class="field">
+        <legend>種類</legend>
+        <label class="radio"><input type="radio" name="type" value="daily" ${type === 'daily' ? 'checked' : ''}>毎日</label>
+        <label class="radio"><input type="radio" name="type" value="calendar" ${type === 'calendar' ? 'checked' : ''}>カレンダー連動</label>
+        <span class="hint">カレンダー連動:Googleカレンダーに「${esc(data.settings.gymKeyword)}」の予定がある日だけ出ます</span>
+      </fieldset>
+      <div class="two">
+        <label class="field">開始日<input type="date" name="start" value="${h ? h.start : today}" required></label>
+        <label class="field">終了日(任意)<input type="date" name="end" value="${h && h.end ? h.end : ''}"></label>
+      </div>
+      <span class="hint muted small">変更は今日の分からすぐに反映されます。確定した過去の日の記録は変わりません。</span>
+      <div class="dlg-actions">
+        ${h ? `<button type="button" class="btn link danger" data-act="habitDelete" data-habit="${h.id}">削除</button>` : ''}
+        <span class="spacer"></span>
+        <button type="button" class="btn" data-act="closeDialog">やめる</button>
+        <button class="btn primary">保存</button>
+      </div>
+    </form>`;
+  dlg.showModal();
+}
+
+const newId = prefix => `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+const findStep = ds => {
+  const g = data.goals[ds.goal];
+  return { g, s: g && (g.steps || []).find(x => x.id === ds.step) };
+};
+const focusStepTitle = () => document.querySelector('.step-form input[name=title]')?.focus();
+
+function renderDemoBar() {
+  const bar = document.getElementById('demoBar');
+  if (MODE !== 'demo') { bar.hidden = true; return; }
+  if (!bar.firstElementChild) {
+    bar.innerHTML = `
+      <span class="demo-now"></span>
+      <button data-act="demoTime">時刻</button>
+      <button data-act="demoNext">次の日へ</button>
+      <button data-act="demoReset">最初に戻す</button>`;
+    bar.hidden = false;
+  }
+  const p = jstParts(clock.now());
+  bar.firstElementChild.textContent = `お試し ${md(today)} ${pad(p.h)}:${pad(p.mi)}`;
+}
+
+// 時間の表示だけ更新する(入力中の内容を消さないため)
+function updateLive() {
+  renderDemoBar();
+  if (tab !== 'today') return;
+  const el = document.getElementById('streakCard');
+  if (el) el.outerHTML = renderStreak(info());
+}
+
+let toastTimer;
+function toast(msg, action) {
+  const el = document.getElementById('toast');
+  el.innerHTML = `<span>${esc(msg)}</span>${action ? `<button>${esc(action.label)}</button>` : ''}`;
+  if (action) el.querySelector('button').onclick = () => { el.classList.remove('show'); action.fn(); };
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), action ? 5000 : 2600);
+}
+
+// 確認の画面。input を渡すと入力欄つき(OKなら入力値、やめたら false)
+function ask({ title, body = '', ok = 'OK', cancel = 'やめる', input = null }) {
+  return new Promise(resolve => {
+    const dlg = document.getElementById('dialog');
+    dlg.innerHTML = `
+      <form method="dialog">
+        <h3>${title}</h3>
+        ${body ? `<p>${body}</p>` : ''}
+        ${input ? `<input class="ask-input" type="${input.type}" value="${esc(input.value)}" required>` : ''}
+        <div class="dlg-actions">
+          <button class="btn" value="cancel" formnovalidate>${cancel}</button>
+          <button class="btn primary" value="ok">${ok}</button>
+        </div>
+      </form>`;
+    dlg.onclose = () => {
+      if (dlg.open) return; // 直前に閉じた別の画面の知らせは無視する
+      resolve(dlg.returnValue === 'ok' ? (input ? dlg.querySelector('input').value : true) : false);
+    };
+    dlg.returnValue = '';
+    dlg.showModal();
+  });
+}
+
+function celebrate() {
+  celebrateUntil = Date.now() + 2600;
+  setTimeout(updateLive, 2700);
+}
+
+const ACTIONS = {
+  tab(ds) {
+    if (ds.tab === 'record' && tab !== 'record') recMonth = null;
+    if (ds.tab === 'settings' && tab !== 'settings') lastMainTab = tab;
+    tab = ds.tab;
+    render();
+    window.scrollTo(0, 0);
+  },
+  // --- 記録 ---
+  recMove(ds) {
+    recMonth = addMonth(recMonth || monthOf(today), Number(ds.dir));
+    render();
+  },
+  dayOpen(ds) {
+    openDayDetail(ds.date);
+  },
+  goToday() {
+    document.getElementById('dialog').close();
+    ACTIONS.tab({ tab: 'today' });
+  },
+  // --- ログインと同期 ---
+  async login() {
+    if (!Sync.api) {
+      toast(Sync.loadFailed ? 'Firebaseを読み込めませんでした。ネットの接続を確かめてください' : '準備中です。少し待ってから、もう一度押してください');
+      return;
+    }
+    try {
+      await Sync.api.signIn();
+    } catch (e) {
+      if (!['auth/popup-closed-by-user', 'auth/cancelled-popup-request'].includes(e.code)) toast(`ログインできませんでした(${e.code || e.message})`);
+    }
+  },
+  async logout() {
+    const ok = await ask({
+      title: 'ログアウトしますか?',
+      body: 'この端末に残っている同期データの写しを消します。クラウドのデータはそのまま残り、もう一度ログインすれば元に戻ります。',
+      ok: 'ログアウト',
+    });
+    if (!ok) return;
+    const uid = Sync.uid();
+    if (Sync.unsub) Sync.unsub();
+    Object.assign(Sync, { unsub: null, user: null, uidHint: null });
+    [UID_KEY, cacheKey(uid), outboxKey(uid)].forEach(k => localStorage.removeItem(k));
+    try {
+      await Sync.api.signOut();
+      await Sync.api.clearCache();
+    } catch (e) {
+      console.warn(e);
+    }
+    location.reload();
+  },
+  // --- 設定 ---
+  habitNew() {
+    openHabitForm(null);
+  },
+  habitEdit(ds) {
+    openHabitForm(data.habits[ds.habit]);
+  },
+  habitSave(ds, f) {
+    const v = name => f.elements[name].value.trim();
+    const name = v('name'), goalId = v('goalId') || null, target = v('target'), start = v('start'), end = v('end') || null;
+    const type = f.elements.type.value === 'calendar' ? 'calendar' : 'daily';
+    if (!name) { toast('名前を入れてください'); return; }
+    if (!isDate(start)) { toast('開始日を入れてください'); return; }
+    if (end && (!isDate(end) || end < start)) { toast('終了日は開始日より後にしてください'); return; }
+    let h = ds.habit ? data.habits[ds.habit] : null;
+    if (h) {
+      if (h.end !== end) h.endNoticeDismissed = false;
+      Object.assign(h, { name, goalId, target, type, start, end });
+    } else {
+      const order = Math.max(0, ...Object.values(data.habits).map(x => x.order || 0)) + 1;
+      h = { id: newId('h'), name, goalId, target, type, start, end, order, endNoticeDismissed: false };
+      data.habits[h.id] = h;
+    }
+    persist(['habits/' + h.id]);
+    saveToday();
+    document.getElementById('dialog').close();
+    render();
+    toast(ds.habit ? '日課を保存しました' : `「${name}」を追加しました`);
+  },
+  async habitDelete(ds) {
+    const h = data.habits[ds.habit];
+    if (!h) return;
+    document.getElementById('dialog').close();
+    const ok = await ask({ title: `「${esc(h.name)}」を削除しますか?`, body: '今日の日課から消えます。確定した過去の日の記録はそのまま残ります。', ok: '削除する' });
+    if (!ok) return;
+    delete data.habits[h.id];
+    persist(['habits/' + h.id]);
+    saveToday();
+    render();
+    toast('日課を削除しました');
+  },
+  setFreeze(ds, el) {
+    data.settings.freezePerMonth = Number(el.value);
+    persist(['meta/settings']);
+    render();
+    toast(`フリーズを月${el.value}回にしました`);
+  },
+  async setCutoff(ds, el) {
+    const n = Number(el.value);
+    // もう新しい区切りを過ぎていると、今日の分がすぐ確定する
+    if (effectiveToday(clock.now(), n, data.state.lastFinalized) > today) {
+      const ok = await ask({
+        title: `${md(today)}の分がすぐに確定します`,
+        body: `区切りを${n}:00にすると、今日の区切りをもう過ぎているため、今日の結果がすぐに確定します。よいですか?`,
+        ok: '変更する',
+      });
+      if (!ok) { render(); return; }
+    }
+    data.settings.cutoffHour = n;
+    persist(['meta/settings']);
+    refreshDay();
+    render();
+    toast(`1日の区切りを${n}:00にしました`);
+    fetchCalendar(); // 区切りが変わると、深夜の予定がどの日の分かも変わる
+  },
+  calSave(ds, f) {
+    const gasUrl = f.elements.gasUrl.value.trim(), gasToken = f.elements.gasToken.value.trim(), gymKeyword = f.elements.gymKeyword.value.trim();
+    if (gasUrl && !/^https:\/\//.test(gasUrl)) { toast('URLは https:// から始まるものを入れてください'); return; }
+    if (!gymKeyword) { toast('キーワードを入れてください'); return; }
+    Object.assign(data.settings, { gasUrl, gasToken, gymKeyword });
+    persist(['meta/settings']);
+    render();
+    if (gasReady()) {
+      toast('保存しました。カレンダーを読み込みます');
+      fetchCalendar(true);
+    } else {
+      toast('カレンダー連携の設定を保存しました');
+    }
+  },
+  calFetch() {
+    fetchCalendar(true);
+  },
+  setNotify(ds, el) {
+    data.settings.notify = el.checked;
+    persist(['meta/settings']);
+    render();
+    toast(el.checked ? 'LINE通知をオンにしました' : 'LINE通知をオフにしました');
+  },
+  async lineTest(ds, el) {
+    el.disabled = true;
+    try {
+      const json = await gasFetch({ action: 'test' });
+      if (json.ok) toast('LINEにテスト通知を送りました。届いたか確かめてください');
+      else if (json.error === 'line-setting') toast('GASのスクリプト プロパティに LINE_TOKEN と LINE_USER_ID を入れてください');
+      else if (json.error === 'line') toast(`LINEに送れませんでした(${json.status})。トークンとユーザーIDを確かめてください`);
+      else toast('GASのコードが古いようです(段階6の完成版に貼り替えてください)');
+    } catch (e) {
+      toast(`テスト通知を送れませんでした:${e.message}`);
+    }
+    el.disabled = false;
+  },
+  togglePw(ds, el) {
+    const input = el.previousElementSibling;
+    input.type = input.type === 'password' ? 'text' : 'password';
+    el.textContent = input.type === 'password' ? '表示' : '隠す';
+  },
+  toggle(ds) {
+    const day = ensureDay(today);
+    const before = info().allDone;
+    day.checks[ds.id] = !day.checks[ds.id];
+    saveToday({ checks: { [ds.id]: day.checks[ds.id] } });
+    if (!before && info().allDone) celebrate();
+    render();
+  },
+  async rest() {
+    const i = info();
+    if (!(i.tasks.length && !i.allDone && i.streakBase > 0 && !i.day.rest && i.left > 0)) return;
+    const ok = await ask({
+      title: '今日は休みますか?',
+      body: `フリーズを1回使います(今月の残り ${i.left}回 → ${i.left - 1}回)。<br>今日の区切りまでは取り消せます。休んでも日課はチェックでき、全部終えればフリーズは戻ります。`,
+      ok: '休む',
+    });
+    if (!ok) return;
+    ensureDay(today).rest = true;
+    saveToday({ rest: true });
+    render();
+    toast('今日は休みの日にしました');
+  },
+  unrest() {
+    ensureDay(today).rest = false;
+    saveToday({ rest: false });
+    render();
+    toast('休みを取り消しました。フリーズは戻りました');
+  },
+  gymOn() {
+    ensureDay(today).gymManual = true;
+    saveToday({ gymManual: true });
+    render();
+    toast('今日をジムの日にしました');
+  },
+  gymOff() {
+    ensureDay(today).gymManual = false;
+    saveToday({ gymManual: false });
+    render();
+    toast('ジムの日をやめました');
+  },
+  extend(ds) {
+    extendOpen = ds.ids;
+    render();
+    document.getElementById('extendDate')?.focus();
+  },
+  cancelExtend() {
+    extendOpen = null;
+    render();
+  },
+  saveExtend(ds) {
+    const v = document.getElementById('extendDate').value;
+    if (!isDate(v) || v < today) { toast('今日以降の日付を選んでください'); return; }
+    const hs = ds.ids.split(',').map(id => data.habits[id]).filter(Boolean);
+    hs.forEach(h => { h.end = v; h.endNoticeDismissed = false; });
+    extendOpen = null;
+    persist(hs.map(h => 'habits/' + h.id));
+    saveToday();
+    render();
+    toast(`${mdShort(v)}まで延長しました`);
+  },
+  endKeep(ds) {
+    const hs = ds.ids.split(',').map(id => data.habits[id]).filter(Boolean);
+    hs.forEach(h => (h.endNoticeDismissed = true));
+    persist(hs.map(h => 'habits/' + h.id));
+    render();
+    toast('このまま終了にしました');
+  },
+  stepDone(ds) {
+    const { g, s } = findStep(ds);
+    if (!s) return;
+    s.done = true;
+    s.doneAt = today;
+    persist(['goals/' + g.id]);
+    render();
+    toast(`「${s.title}」を完了にしました`, {
+      label: '元に戻す',
+      fn() { s.done = false; s.doneAt = null; persist(['goals/' + g.id]); render(); },
+    });
+  },
+  stepUndo(ds) {
+    const { g, s } = findStep(ds);
+    if (!s) return;
+    s.done = false;
+    s.doneAt = null;
+    persist(['goals/' + g.id]);
+    render();
+    toast(`「${s.title}」を未完了に戻しました`);
+  },
+  stepNew(ds) {
+    stepForm = { goal: ds.goal, step: null };
+    render();
+    focusStepTitle();
+  },
+  stepEdit(ds) {
+    stepForm = { goal: ds.goal, step: ds.step };
+    render();
+    focusStepTitle();
+  },
+  stepCancel() {
+    stepForm = null;
+    render();
+  },
+  stepSave(ds, f) {
+    const g = data.goals[ds.goal];
+    if (!g) return;
+    const title = f.elements.title.value.trim();
+    const due = f.elements.due.value;
+    if (!title) { toast('ステップの内容を入れてください'); return; }
+    if (due && !isDate(due)) { toast('期限の日付を確かめてください'); return; }
+    g.steps ||= [];
+    if (ds.step) {
+      const s = g.steps.find(x => x.id === ds.step);
+      if (!s) return;
+      Object.assign(s, { title, due: due || null });
+      stepForm = null;
+      toast('ステップを保存しました');
+    } else {
+      // 続けて追加できるよう、入力欄は開いたままにする
+      g.steps.push({ id: newId('s'), title, due: due || null, done: false, doneAt: null, order: Math.max(0, ...g.steps.map(x => x.order || 0)) + 1 });
+      toast(`「${title}」を追加しました`);
+    }
+    persist(['goals/' + g.id]);
+    render();
+    if (stepForm) focusStepTitle();
+  },
+  async stepDelete(ds) {
+    const { g, s } = findStep(ds);
+    if (!s) return;
+    if (!await ask({ title: `「${esc(s.title)}」を削除しますか?`, ok: '削除する' })) return;
+    g.steps = g.steps.filter(x => x !== s);
+    stepForm = null;
+    persist(['goals/' + g.id]);
+    render();
+    toast('ステップを削除しました');
+  },
+  stepMove(ds) {
+    const g = data.goals[ds.goal];
+    if (g && moveStep(g.steps, ds.step, Number(ds.dir))) {
+      persist(['goals/' + g.id]);
+      render();
+    }
+  },
+  // --- 目標 ---
+  // チケットを押すと、半券がちぎれて落ちてから、その目標のページが開く
+  ticketOpen(ds, el) {
+    if (el.classList.contains('tearing')) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { ACTIONS.goalJump(ds); return; }
+    const stub = el.querySelector('.ticket-stub');
+    const r = stub.getBoundingClientRect();
+    const piece = stub.cloneNode(true);
+    piece.classList.add('torn-piece');
+    piece.style.cssText = `left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;--c:${el.style.getPropertyValue('--c')}`;
+    document.body.appendChild(piece);
+    el.classList.add('tearing');
+    if (navigator.vibrate) navigator.vibrate(12); // 対応しているスマホでは、少しぶるっと
+    setTimeout(() => {
+      piece.remove();
+      ACTIONS.goalJump(ds);
+    }, 520);
+  },
+  goalJump(ds) {
+    tab = 'goals';
+    openGoals.add(ds.goal);
+    render();
+    document.getElementById('goal-' + ds.goal)?.scrollIntoView({ block: 'start' });
+  },
+  goalToggle(ds) {
+    if (openGoals.has(ds.goal)) {
+      openGoals.delete(ds.goal);
+      if (stepForm && stepForm.goal === ds.goal) stepForm = null;
+    } else {
+      openGoals.add(ds.goal);
+    }
+    render();
+  },
+  toggleDone(ds) {
+    if (openDone.has(ds.goal)) openDone.delete(ds.goal);
+    else openDone.add(ds.goal);
+    render();
+  },
+  toggleArchived() {
+    showArchived = !showArchived;
+    render();
+  },
+  goalNew() {
+    openGoalForm(null);
+  },
+  goalEdit(ds) {
+    openGoalForm(data.goals[ds.goal]);
+  },
+  closeDialog() {
+    document.getElementById('dialog').close();
+  },
+  goalSave(ds, f) {
+    const v = name => f.elements[name].value.trim();
+    const name = v('name'), label = v('label'), due = v('due'), place = v('place');
+    const color = safeColor(f.elements.color.value);
+    if (!name || !label || !isDate(due)) { toast('目標名・ラベル・期限を入れてください'); return; }
+    let g = ds.goal ? data.goals[ds.goal] : null;
+    if (g) {
+      Object.assign(g, { name, label, color, due, place });
+    } else {
+      g = { id: newId('g'), name, label, color, due, place, archived: false, archivedAt: null, order: Object.keys(data.goals).length + 1, steps: [] };
+      data.goals[g.id] = g;
+      openGoals.add(g.id);
+    }
+    persist(['goals/' + g.id]);
+    saveToday(); // 今日の日課のラベルも、新しい名前と色にそろえる
+    document.getElementById('dialog').close();
+    render();
+    toast(ds.goal ? '目標を保存しました' : `「${name}」を追加しました`);
+  },
+  async goalDelete(ds) {
+    const g = data.goals[ds.goal];
+    if (!g) return;
+    document.getElementById('dialog').close();
+    const linked = Object.values(data.habits).filter(h => h.goalId === g.id);
+    const ok = await ask({
+      title: `「${esc(g.name)}」を削除しますか?`,
+      body: `ステップもすべて消えます。${linked.length ? `この目標の日課(${linked.map(h => esc(h.name)).join('、')})は、ラベルなしで残ります。` : ''}過去の記録はそのままです。`,
+      ok: '削除する',
+    });
+    if (!ok) return;
+    delete data.goals[g.id];
+    openGoals.delete(g.id);
+    if (stepForm && stepForm.goal === g.id) stepForm = null;
+    persist(['goals/' + g.id]);
+    saveToday();
+    render();
+    toast('目標を削除しました');
+  },
+  async goalArchive(ds) {
+    const g = data.goals[ds.goal];
+    if (!g) return;
+    const ok = await ask({ title: `「${esc(g.name)}」を完了にしますか?`, body: '下の「完了した目標」に移ります。いつでも元に戻せます。', ok: '完了にする' });
+    if (!ok) return;
+    g.archived = true;
+    g.archivedAt = today;
+    openGoals.delete(g.id);
+    if (stepForm && stepForm.goal === g.id) stepForm = null;
+    persist(['goals/' + g.id]);
+    render();
+    toast(`「${g.name}」を完了にしました`, { label: '元に戻す', fn: () => ACTIONS.goalRestore({ goal: g.id }) });
+  },
+  goalRestore(ds) {
+    const g = data.goals[ds.goal];
+    if (!g) return;
+    g.archived = false;
+    g.archivedAt = null;
+    persist(['goals/' + g.id]);
+    render();
+    toast(`「${g.name}」を目標の一覧に戻しました`);
+  },
+  dismissBroken() {
+    brokenShown = null;
+    render();
+  },
+  // --- お試しモード ---
+  demoNext() {
+    const before = today;
+    clock.offset += DAY;
+    demo.offset = clock.offset;
+    save();
+    refreshDay();
+    extendOpen = null;
+    render();
+    toast(`${md(before)}は「${RESULT_LABEL[data.days[before].result]}」で確定。${md(today)}になりました`);
+  },
+  async demoTime() {
+    const p = jstParts(clock.now());
+    const cutoff = data.settings.cutoffHour;
+    const v = await ask({
+      title: '時刻を変える',
+      body: `${md(today)}の時刻を選んでください。${(cutoff + 20) % 24}:00を過ぎると、未完了の警告が出ます。`,
+      ok: '変える',
+      input: { type: 'time', value: `${pad(p.h)}:${pad(p.mi)}` },
+    });
+    if (!v) return;
+    const [hh, mm] = v.split(':').map(Number);
+    clock.offset = msAt(today, hh, mm, cutoff) - Date.now();
+    demo.offset = clock.offset;
+    save();
+    tick();
+  },
+  async demoReset() {
+    const ok = await ask({ title: 'お試しデータを最初に戻しますか?', body: 'お試しモードで変えた内容は消えます(本物のデータには影響しません)。', ok: '戻す' });
+    if (!ok) return;
+    seedDemo();
+    brokenShown = null;
+    extendOpen = null;
+    refreshDay();
+    render();
+    toast('お試しデータを最初に戻しました');
+  },
+};
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]');
+  if (el && el.tagName !== 'FORM' && !el.disabled && ACTIONS[el.dataset.act]) ACTIONS[el.dataset.act](el.dataset, el);
+});
+// 選択欄を変えたとき
+document.addEventListener('change', e => {
+  const el = e.target.closest('[data-change]');
+  if (el) ACTIONS[el.dataset.change]?.(el.dataset, el);
+});
+// 入力欄でEnterを押したときも保存する
+document.addEventListener('submit', e => {
+  const f = e.target.closest('form[data-act]');
+  if (!f) return;
+  e.preventDefault();
+  ACTIONS[f.dataset.act]?.(f.dataset, f);
+});
+
+// ============================================================
+// 起動
+// ============================================================
+const demoKey = () => `date=${params.get('date') || ''}&time=${params.get('time') || ''}`;
+
+function seedDemo() {
+  const dateP = params.get('date'), timeP = params.get('time') || '';
+  const realNow = Date.now(), p = jstParts(realNow);
+  let hh = p.h, mm = p.mi;
+  const t = timeP.match(/^(\d{1,2}):(\d{2})$/);
+  if (t && +t[1] < 24 && +t[2] < 60) { hh = +t[1]; mm = +t[2]; }
+  const day = isDate(dateP) ? dateP : logicalDate(realNow, 0);
+  const target = isDate(dateP) || t ? msAt(day, hh, mm, 0) : realNow;
+  clock.offset = target - realNow;
+  data = buildDemo(logicalDate(target, 0));
+  demo = { key: demoKey(), offset: clock.offset };
+  save();
+}
+
+function boot() {
+  if (MODE === 'demo') {
+    const saved = loadKey('todo-v1-demo');
+    if (saved && saved.data && saved.demo && saved.demo.key === demoKey()) {
+      data = saved.data;
+      demo = saved.demo;
+      clock.offset = demo.offset;
+    } else {
+      seedDemo();
+    }
+  } else {
+    // 前回ログインしていたら、その写しからすぐに表示する(Firebaseの準備を待たない)
+    const uid = Sync.enabled ? localStorage.getItem(UID_KEY) : null;
+    const cached = uid ? loadKey(cacheKey(uid)) : null;
+    const saved = loadKey(PREFIX);
+    if (cached && cached.data && cached.data.v === 1) {
+      Sync.uidHint = uid;
+      data = cached.data;
+    } else if (saved && saved.data && saved.data.v === 1) {
+      data = saved.data;
+    } else {
+      data = freshData(logicalDate(Date.now(), 0));
+      save();
+    }
+  }
+  if (MODE !== 'demo') Calendar.load();
+  refreshDay();
+  render();
+  setInterval(tick, 15000);
+  // カレンダーは、開いたときと1時間ごと(画面に戻ってきたときも、10分以上たっていれば)に読み込む
+  fetchCalendar();
+  setInterval(() => fetchCalendar(), HOUR);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    tick();
+    if (!Calendar.status || Date.now() - Calendar.status.at > 10 * 60000) fetchCalendar();
+  });
+  window.addEventListener('online', () => { updateStatus(); maybeFinalize(); });
+  window.addEventListener('offline', updateStatus);
+  document.getElementById('dialog').addEventListener('close', flushRender);
+  document.addEventListener('focusout', flushRender);
+  if (Sync.enabled) startSync();
+}
+
+// ============================================================
+// 動作確認(?test)— ストリークの判定を、ルール1〜5と表の例で確かめます
+// ============================================================
+function runTests() {
+  const results = [];
+  const check = (name, ok, detail = '') => results.push({ name, ok: !!ok, detail: String(detail ?? '') });
+  const MWF = (ds, day) => !!(day && day.gymManual) || demoGym(ds);
+
+  // 日付と時刻
+  check('日本時間:世界標準時 10/18 15:00 は 10/19 0:00', logicalDate(Date.UTC(2026, 9, 18, 15, 0), 0) === '2026-10-19');
+  check('日本時間:世界標準時 10/18 14:59 は 10/18 23:59', logicalDate(Date.UTC(2026, 9, 18, 14, 59), 0) === '2026-10-18');
+  check('区切り3:00のとき、10/20 2:30 は 10/19 の分', logicalDate(msAt('2026-10-19', 2, 30, 3), 3) === '2026-10-19' && jstParts(msAt('2026-10-19', 2, 30, 3)).d === 20);
+  check('区切り3:00のとき、10/20 3:00 からは 10/20 の分', logicalDate(Date.UTC(2026, 9, 19, 18, 0), 3) === '2026-10-20');
+  check('10/31 の次の日は 11/1', addDays('2026-10-31', 1) === '2026-11-01');
+  check('10/18 から IELTS本番(11/7)まで あと20日', diffDays('2026-10-18', '2026-11-07') === 20);
+  check('11/5 は 11/6 0:00(日本時間)に終わる', dayEndMs('2026-11-05', 0) === Date.UTC(2026, 10, 5, 15, 0));
+  check('区切りを遅らせても、確定済みの日には戻らない', effectiveToday(Date.UTC(2026, 9, 18, 16, 0), 3, '2026-10-18') === '2026-10-19');
+
+  // ルール1〜5
+  const base = { taskIds: ['a', 'b'], checks: {}, rest: false, streak: 5, freezeLeft: 2 };
+  let j = judgeDay({ ...base, checks: { a: true, b: true } });
+  check('ルール1:全部完了 →「完了」', j.result === 'done' && !j.freezeUsed);
+  j = judgeDay({ ...base, rest: true, checks: { a: true } });
+  check('ルール2:「今日は休む」を使って未完了 →「フリーズ」', j.result === 'freeze' && j.freezeUsed && j.by === 'rest');
+  j = judgeDay({ ...base, checks: { a: true } });
+  check('ルール3:未完了でフリーズが残っている → 自動で「フリーズ」', j.result === 'freeze' && j.freezeUsed && j.by === 'auto');
+  j = judgeDay({ ...base, freezeLeft: 0 });
+  check('ルール4:未完了でフリーズが残っていない →「途切れ」', j.result === 'broken' && !j.freezeUsed);
+  j = judgeDay({ ...base, taskIds: [] });
+  check('ルール5:やるべき日課が0個 →「お休み」', j.result === 'off' && !j.freezeUsed);
+  j = judgeDay({ ...base, rest: true, checks: { a: true, b: true } });
+  check('休んだ日でも全部終えれば「完了」(フリーズは使わない)', j.result === 'done' && !j.freezeUsed);
+  j = judgeDay({ ...base, streak: 0 });
+  check('連続0日の日に未完了 → フリーズは使わない', j.result === 'broken' && !j.freezeUsed);
+  j = judgeDay({ ...base, taskIds: [], rest: true });
+  check('日課0個の日に休んでも、フリーズは使わない', j.result === 'off' && !j.freezeUsed);
+
+  // 表の例は、最初の4つの日課(単語帳・スピーキング・食事・ジム)で確かめる
+  const base4 = d => {
+    for (const id of Object.keys(d.habits)) if (!['h-vocab', 'h-speak', 'h-meal', 'h-gym'].includes(id)) delete d.habits[id];
+    return d;
+  };
+  const off = base4(freshData('2026-10-18'));
+  Object.values(off.habits).forEach(h => (h.end = '2026-10-18'));
+  off.days['2026-10-18'] = { ...newDay('2026-10-18'), checks: { 'h-vocab': true, 'h-speak': true, 'h-meal': true } };
+  finalizeThrough(off, '2026-10-19', () => false);
+  check('お休みの日は、連続日数がそのまま(増えない)', off.days['2026-10-19'].result === 'off' && off.state.streak === 1, `連続${off.state.streak}日`);
+
+  // 設計案の表(10/18〜11/5)
+  const sim = base4(freshData('2026-10-18'));
+  const all = ds => {
+    const day = (sim.days[ds] ||= newDay(ds));
+    tasksFor(ds, Object.values(sim.habits), MWF(ds, day)).forEach(h => (day.checks[h.id] = true));
+  };
+  const open = ds => finalizeThrough(sim, addDays(ds, -1), MWF); // その日にサイトを開く
+  const leftAt = ds => sim.settings.freezePerMonth - Object.values(sim.days)
+    .filter(x => x.result && monthOf(x.date) === monthOf(ds) && x.date <= ds && x.freezeUsed).length;
+  const row = (ds, result, streak, left, extra = true) => {
+    const x = sim.days[ds];
+    check(`表 ${md(ds)}:${RESULT_LABEL[result]}・連続${streak}日・フリーズ残り${left}回`,
+      x && x.result === result && x.streakAfter === streak && leftAt(ds) === left && extra,
+      x ? `結果:${RESULT_LABEL[x.result] || '未確定'}・連続${x.streakAfter}日・残り${leftAt(ds)}回` : '記録なし');
+  };
+  all('2026-10-18'); open('2026-10-19');
+  row('2026-10-18', 'done', 1, 2);
+  all('2026-10-19'); open('2026-10-20');
+  row('2026-10-19', 'done', 2, 2, sim.days['2026-10-19'].tasks.length === 4);
+  (sim.days['2026-10-20'] = newDay('2026-10-20')).rest = true;
+  check('10/20(火)「今日は休む」を押すと、今月の残りがすぐ1回になる', todayInfo(sim, '2026-10-20', MWF).left === 1);
+  open('2026-10-21');
+  row('2026-10-20', 'freeze', 2, 1, sim.days['2026-10-20'].freezeBy === 'rest');
+  (sim.days['2026-10-21'] = newDay('2026-10-21')).rest = true;
+  check('10/21(水)「今日は休む」を押すと残り0回', todayInfo(sim, '2026-10-21', MWF).left === 0);
+  all('2026-10-21');
+  const i21 = todayInfo(sim, '2026-10-21', MWF);
+  check('10/21(水) 全部終えるとフリーズが戻り、連続3日と表示', i21.left === 1 && i21.streakShown === 3, `残り${i21.left}回・連続${i21.streakShown}日`);
+  open('2026-10-22');
+  row('2026-10-21', 'done', 3, 1);
+  for (let ds = '2026-10-22'; ds <= '2026-10-29'; ds = addDays(ds, 1)) { all(ds); open(addDays(ds, 1)); }
+  all('2026-10-30');
+  open('2026-11-04'); // 10/31〜11/3は開かず、11/4に開く
+  row('2026-10-30', 'done', 12, 1);
+  row('2026-10-31', 'freeze', 12, 0, sim.days['2026-10-31'].freezeBy === 'auto');
+  row('2026-11-01', 'freeze', 12, 1);
+  row('2026-11-02', 'freeze', 12, 0, sim.days['2026-11-02'].tasks.length === 4);
+  row('2026-11-03', 'broken', 0, 0);
+  const bn = sim.state.brokenNotice;
+  check('11/4 に開くと「ストリークが途切れました(最高記録:12日)」', bn && bn.lost === 12 && bn.best === 12, JSON.stringify(bn));
+  check('最高記録は12日のまま残る', sim.state.best === 12, `${sim.state.best}日`);
+  all('2026-11-04'); open('2026-11-05');
+  row('2026-11-04', 'done', 1, 0);
+  const i5 = todayInfo(sim, '2026-11-05', MWF);
+  const w15 = warningFor(i5, msAt('2026-11-05', 15, 0, 0), 0);
+  check('11/5 15:00「フリーズなし:今日やらないと0日に戻ります」が出る', w15 && w15.noFreeze && !w15.urgent);
+  const w2048 = warningFor(i5, msAt('2026-11-05', 20, 48, 0), 0);
+  check('11/5 20:48「あと3時間12分でストリークが消えます」', w2048 && w2048.urgent && w2048.text === 'あと3時間12分でストリークが消えます', w2048 && w2048.text);
+  const w21 = warningFor({ ...i5, left: 1 }, msAt('2026-11-05', 21, 0, 0), 0);
+  check('フリーズが残っている日は「このままだとフリーズを1回使います」', w21 && w21.text === 'あと3時間(このままだとフリーズを1回使います)', w21 && w21.text);
+  sim.habits['h-vocab'].name = '名前を変えた';
+  delete sim.habits['h-speak'];
+  check('日課を編集・削除しても、確定した日の記録は変わらない',
+    sim.days['2026-10-18'].tasks.map(t => t.name).join('・') === '単語帳を読む・スピーキング1回・食事・プロテイン');
+
+  // 記録(段階3)— 表の例のデータを使う
+  const oct = monthStats(sim, '2026-10', '2026-11-05', false);
+  check('10月の達成率:日課があった14日のうち完了12日 → 86%', oct.done === 12 && oct.total === 14 && oct.rate === 86, JSON.stringify(oct));
+  const nov = monthStats(sim, '2026-11', '2026-11-05', false);
+  check('11月の達成率:今日がまだなら今日は数えない(1/4 → 25%)', nov.done === 1 && nov.total === 4 && nov.rate === 25, JSON.stringify(nov));
+  const novDone = monthStats(sim, '2026-11', '2026-11-05', true);
+  check('今日を全部終えたら、今日も数える(2/5 → 40%)', novDone.rate === 40, JSON.stringify(novDone));
+  check('お休みの日は達成率に数えない', monthStats(off, '2026-10', '2026-10-20', false).total === 1);
+  check('カレンダーの色:フリーズ・途切れ・今日・使い始める前・これから先',
+    dayStatus(sim, '2026-10-20', '2026-11-05', false) === 'freeze' && dayStatus(sim, '2026-11-03', '2026-11-05', false) === 'broken'
+      && dayStatus(sim, '2026-11-05', '2026-11-05', false) === 'today' && dayStatus(sim, '2026-10-17', '2026-11-05', false) === 'none'
+      && dayStatus(sim, '2026-11-06', '2026-11-05', false) === 'none');
+  const grid = monthGrid('2026-10');
+  check('2026年10月のカレンダーは木曜から始まる5週', grid.slice(0, 4).every(x => x === null) && grid[4] === '2026-10-01' && grid.length === 35);
+  check('前の月・次の月(年をまたぐ)', addMonth('2026-01', -1) === '2025-12' && addMonth('2026-12', 1) === '2027-01');
+
+  // カレンダー連携(段階5)
+  Calendar.dates = new Set(['2026-10-19']);
+  check('カレンダーにジムの予定がある日は、ジムの日', gymOf('2026-10-19', null) && !gymOf('2026-10-20', null));
+  check('その日の記録に残した結果(ほかの端末が読んだ分)を優先する', gymOf('2026-10-20', { gymCal: true }) && !gymOf('2026-10-19', { gymCal: false }));
+  check('「今日はジムの日にする」はカレンダーより優先', gymOf('2026-10-20', { gymManual: true, gymCal: false }));
+  Calendar.dates = new Set();
+
+  // 目標のステップ(段階2)
+  const st = [
+    { id: 'a', title: 'A', due: '2026-10-25', done: false, order: 3 },
+    { id: 'b', title: 'B', due: '2026-10-20', done: false, order: 4 },
+    { id: 'c', title: 'C', due: null, done: false, order: 1 },
+    { id: 'd', title: 'D', due: '2026-10-25', done: false, order: 2 },
+    { id: 'e', title: 'E', due: '2026-10-19', done: true, order: 5 },
+  ];
+  const ids = () => sortSteps(st.filter(s => !s.done)).map(s => s.id).join('');
+  check('ステップは期限が近い順(同じ期限は並び順、期限なしは最後)', ids() === 'bdac', ids());
+  check('同じ期限のステップは↑で入れ替えられる', moveStep(st, 'a', -1) && ids() === 'badc', ids());
+  check('期限が違うステップとは入れ替えない', !moveStep(st, 'b', 1) && !moveStep(st, 'c', -1) && ids() === 'badc', ids());
+  check('期限の表示(期限切れ・今日まで・あと○日)',
+    dueText('2026-10-16', '2026-10-18') === '期限切れ(2日過ぎ)' && dueText('2026-10-18', '2026-10-18') === '今日まで' && dueText('2026-10-22', '2026-10-18') === 'あと4日');
+
+  // お試しデータ
+  const dm = buildDemo('2026-11-06');
+  const counts = r => Object.values(dm.days).filter(x => x.result === r).length;
+  check('お試しデータ:完了・フリーズ・途切れ・ジムの日・休んだ日・月またぎがある',
+    counts('done') > 0 && counts('freeze') >= 3 && counts('broken') >= 1 && Object.values(dm.days).some(x => x.gym)
+      && Object.values(dm.days).some(x => x.freezeBy === 'rest') && new Set(Object.keys(dm.days).map(monthOf)).size >= 2,
+    `完了${counts('done')}・フリーズ${counts('freeze')}・途切れ${counts('broken')}`);
+
+  const pass = results.filter(r => r.ok).length;
+  document.getElementById('app').innerHTML = `
+    <h1 class="test-title">ストリーク判定の確認</h1>
+    <p class="test-sum ${pass === results.length ? 'pass' : 'fail'}">${results.length}件中 ${pass}件 合格</p>
+    <div class="card list">${results.map(r => `
+      <div class="test-item">
+        <span class="${r.ok ? 'pass' : 'fail'}">${r.ok ? '✓' : '✗'}</span>
+        <div>${esc(r.name)}${!r.ok && r.detail ? `<div class="muted small">${esc(r.detail)}</div>` : ''}</div>
+      </div>`).join('')}</div>`;
+  document.getElementById('tabbar').hidden = true;
+  console.table(results);
+}
+
+if (params.has('test')) runTests();
+else boot();
+</script>
+</body>
+</html>
